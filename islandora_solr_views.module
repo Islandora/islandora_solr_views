@@ -1,0 +1,151 @@
+<?php
+
+/**
+ * @file
+ * Provides Views Implementation for the ApacheSolr Search Integration project
+ * drupal.org/project/apachesolr
+ */
+
+/**
+ * Implementation of hook_views_api().
+ */
+function islandora_solr_views_views_api() {
+  return array('api' => '3.0');
+}
+
+/**
+ * Implementation of hook_islandora_solr_entities().
+ * This is done for apachesolr_search module.
+ */
+function islandora_solr_views_islandora_solr_entities() {
+  return array(
+    'node' => array(
+      'name' => 'Node',
+      'base_field' => 'nid',
+    ),
+  );
+}
+
+/**
+ * Process a single field within a view.
+ *
+ * This preprocess function isn't normally run, as a function is used by
+ * default, for performance. However, by creating a template, this
+ * preprocess should get picked up.
+ */
+function islandora_solr_views_preprocess_views_view_field(&$vars) {
+
+  $field = $vars['field'];
+
+  if ($field->view->name != 'mip_search_apachesolr') {
+    return;
+  }
+
+  $field_name = $field->field;
+  $node = $vars['row']->node;
+
+  $apachesolr_field_name = islandora_solr_views_field_names_map($field_name);
+
+  // Customization for Services field.
+  if ($field_name == 'field_mip_services') {
+    $apachesolr_field_name = 'tm_vid_7_names';
+  }
+
+  if (isset($node->{$apachesolr_field_name})) {
+    $vars['output'] = $node->{$apachesolr_field_name};
+  }
+
+  if (is_array($vars['output'])) {
+    $vars['output'] = implode(' ', $vars['output']);
+  }
+
+//  dpm($field_name, 'field_name');
+//  dpm($apachesolr_field_name, 'apachesolr_field_name');
+//  dpm($vars['output'], 'vars output');
+}
+
+/**
+ * Helper. Return apachesolr field name by drupal field name.
+ *
+ * @param string $field_name
+ *   Drupal field name.
+ * @return string
+ *   Apachesolr field name.
+ */
+function islandora_solr_views_field_names_map($field_name) {
+  $map = &drupal_static(__FUNCTION__, array());
+
+  if (empty($map)) {
+    foreach (apachesolr_entity_fields('node') as $apachesolr_field_name => $apachesolr_field) {
+      $field_name = $apachesolr_field['field']['field_name'];
+      $map[$field_name] = $apachesolr_field_name;
+    }
+  }
+
+  if (isset($map[$field_name])) {
+    return $map[$field_name];
+  }
+}
+
+
+/**
+ * Implements hook_views_pre_execute().
+ *
+ * @param type $view
+ */
+function islandora_solr_views_views_post_execute($view) {
+  if (!key_exists('apachesolr_area', $view->header)) {
+    return;
+  }
+
+  $output_string = 'Your search returned @count results';
+  $output_string_singular = 'Your search returned one result';
+  $output_string_arguments = array();
+
+  $apachesolr_params = $view->query->get_params();
+  if (isset($apachesolr_params['q']) && !empty($apachesolr_params['q'])) {
+    $search_string = $apachesolr_params['q'];
+    // Strip wildcards if we used dismax handler. But we cannot determine at
+    // the moment what handler we use.
+//    if (isset($apachesolr_params['defType']) && $apachesolr_params['defType'] == 'dismax') {
+      $search_string_array = explode(' ', $search_string);
+      $search_string_array_stripped = array();
+      foreach ($search_string_array as $element) {
+        $search_string_array_stripped[] = trim($element, '*');
+      }
+      $search_string = implode(' ', $search_string_array_stripped);
+//    }
+    $output_string = 'Your search for \'!search_string\' returned @count results';
+    $output_string_singular = 'Your search for \'!search_string\' returned one result';
+    $output_string_arguments['!search_string'] = $search_string;
+  }
+
+  foreach ($view->header as $key => $header) {
+    if (strpos($key, 'apachesolr_area') !== FALSE) {
+      $view->header[$key]->options['content'] = '<div class="apachesolr-results">' . format_plural($view->total_rows, $output_string_singular, $output_string, $output_string_arguments) . '</div>';
+    }
+  }
+}
+
+function islandora_solr_views_init() {
+  if (drupal_is_front_page()) {
+      global $_islandora_solr_search_queryclass;
+      //islandora_solr_search_init();
+      // include IslandoraSolrQueryProcessor
+      module_load_include('inc', 'islandora_solr_search', 'IslandoraSolrQueryProcessor');
+    
+      $query = 'california';
+      $fq = '-';
+      $dismax = 'dismax';
+      
+      $_islandora_solr_search_queryclass = new IslandoraSolrQueryProcessor();
+      $_islandora_solr_search_queryclass->buildAndExecuteQuery($query, $fq, $dismax);
+      
+      // results
+      $results = $_islandora_solr_search_queryclass->solrResult;
+      $rawResponse = $results->getRawResponse();
+      $output = json_decode($rawResponse, TRUE);
+      dsm($output);
+      dsm($_islandora_solr_search_queryclass);
+  }
+}
