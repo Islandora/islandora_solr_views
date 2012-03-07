@@ -39,7 +39,7 @@ class islandora_solr_views_query extends views_plugin_query {
 
     // Set aliases of the fields.
     foreach ($view->field as $field_name => &$field) {
-      dsm($field);
+      //dsm($field);
       $field->field_alias = $field_name;
       $field->aliases['entity_type'] = 'entity_type';
     }
@@ -56,13 +56,15 @@ class islandora_solr_views_query extends views_plugin_query {
    * $view->pager['current_page'].
    */
   public function execute(&$view) {
-    dsm($view);
-    dsm($this->params);
+    //dsm($view);
+    //dsm($this->params);
     try {
       $start = microtime(TRUE);
       
       // include IslandoraSolrQueryProcessor
       module_load_include('inc', 'islandora_solr_search', 'IslandoraSolrQueryProcessor');
+      // include common.inc
+      module_load_include('inc', 'islandora_solr_search', 'includes/common');
 
 
       
@@ -111,33 +113,51 @@ class islandora_solr_views_query extends views_plugin_query {
       //list($final_query, $response) = apachesolr_do_query($query, $this->pager->current_page);
       //apachesolr_has_searched(TRUE);
 
-
-
-      global $_islandora_solr_search_queryclass;
+      //dsm($this);
+      dsm($params);
+      //global $_islandora_solr_search_queryclass;
     
-      $query = 'california';
+      $query = '*:*';
       $fq = '-';
-      $dismax = 'dismax';
+      $dismax = NULL;
       
-      $_islandora_solr_search_queryclass = new IslandoraSolrQueryProcessor();
-      $_islandora_solr_search_queryclass->buildAndExecuteQuery($query, $fq, $dismax);
+      // new query class
+      $queryclass = new IslandoraSolrQueryProcessor();
+      // @TODO: remove this later. build entire query - I'm going to do it manually
+      //$queryclass->buildQuery($query, $fq, $dismax);
+    
+      // set dismax or not. (later: probably not)
+      if ($dismax != NULL) {
+        $this->solrDefType = $dismax;
+        $this->solrParams['defType'] = $dismax;
+      }
+
+      $queryclass->solrLimit = $this->pager->options['items_per_page'];
+      
+      $queryclass->solrStart = max(0, $this->pager->current_page) * $queryclass->solrLimit;
+      $queryclass->solrQuery = restore_slashes($query);
+      $queryclass->solrParams = $params;
+      //dsm($queryclass->solrParams);
+      // excecute query
+      $queryclass->executeQuery();
       
       // results
-      $results = $_islandora_solr_search_queryclass->solrResult;
+      $results = $queryclass->solrResult;
       $rawResponse = $results->getRawResponse();
       $response_array = json_decode($rawResponse, TRUE);
-      dsm($response_array);
-      dsm($_islandora_solr_search_queryclass);      
+      //dsm($response_array);
+      //dsm($queryclass);      
       
-      
+      //dsm(islandora_solr_views_luke());
       
       // This is needed for removing errors in standard field handler.
       // When we move to our custom field handlers this won't be needed.
       // @see views_handler_field_field.inc line 600.
       
       foreach ($response_array['response']['docs'] as $result_item) {
-        dsm($result_item);
-        $result_item['mods_title_s'] = $result_item['mods_title_s'][0];
+        //dsm($result_item);
+        $result_item['mods_title_s'] = (isset($result_item['mods_title_s'][0])) ? $result_item['mods_title_s'][0] : '';
+        //$result_item['mods_title_s'] = $result_item['PID'];
         
         
         $view->result[] = (object) $result_item;

@@ -28,4 +28,12 @@ class islandora_solr_views_handler_filter extends views_handler_filter {
       '#default_value' => $this->value,
     );
   }
+  
+  /**
+   * Provide default options for exposed filters.
+   */
+  function expose_options() {
+    $this->options['expose']['identifier'] = strtolower( preg_replace('/[^A-Za-z0-9]/', '_', $this->options['id']) );
+  }
+  
 }

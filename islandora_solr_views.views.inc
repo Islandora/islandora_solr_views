@@ -63,7 +63,10 @@ function islandora_solr_views_views_data() {
     // Get the list of the fields in idex directly from Solr.
     //$solr = apachesolr_get_solr();
     //$solr_fields = $solr->getFields(1);
-    $solr_fields = array('mods_title_s' => 'mods_title_s');
+    //$solr_fields = array('mods_title_s' => 'mods_title_s');
+    
+    $luke = islandora_solr_views_luke(1);
+    $solr_fields = $luke['fields'];
     foreach ($solr_fields as $solr_field_name => $solr_field) {
 
       // We do not allow to display 'sort_*' fields.
@@ -71,14 +74,14 @@ function islandora_solr_views_views_data() {
         continue;
       }
 
-//      $field_type = $solr_field->type;
-      $field_type = 'field_type';
+      $field_type = $solr_field['type'];
+//      $field_type = 'field_type';
 
       //$field_names = apachesolr_views_field_names($solr_field_name);
 
       $data[$islandora_solr_base_table][$solr_field_name] = array(
-        'title' => t('Mods Title'),
-        'help' => t('Mods Title help'),
+        'title' => $solr_field_name . ' ' . t('Title'),
+        'help' => $solr_field_name . ' ' . t('Help'),
         'field' => array(
           'handler' => 'islandora_solr_views_handler_field',
           'click sortable' => TRUE,
@@ -103,3 +106,5 @@ function islandora_solr_views_views_data() {
 //  dsm($data);
   return $data;
 }
+
+
