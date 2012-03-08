@@ -89,13 +89,16 @@ class islandora_solr_views_query extends views_plugin_query {
 
       // Add filters to parameters.
       if (isset($this->params['filters'])) {
+        dsm($this->params);
         $params['fq'] = $this->params['filters'];
       }
 
       // Add sorting.
-      $solrsort = '';
+//      $solrsort = '';
       if (isset($this->params['sort'])) {
-        $solrsort = implode(', ', $this->params['sort']);
+        $params['sort'] = implode(', ', $this->params['sort']);
+        // sample sort parameters: q=video&sort=inStock asc, price desc
+        
       }
 
       // Load search query and execute it.
@@ -114,7 +117,10 @@ class islandora_solr_views_query extends views_plugin_query {
       //apachesolr_has_searched(TRUE);
 
       //dsm($this);
-      dsm($params);
+//      dsm($params);
+//      dsm($this);
+//      dsm($this->params);
+//      dsm($this->get_params());
       //global $_islandora_solr_search_queryclass;
     
       $query = '*:*';
@@ -145,7 +151,7 @@ class islandora_solr_views_query extends views_plugin_query {
       $results = $queryclass->solrResult;
       $rawResponse = $results->getRawResponse();
       $response_array = json_decode($rawResponse, TRUE);
-      //dsm($response_array);
+      dsm($response_array);
       //dsm($queryclass);      
       
       //dsm(islandora_solr_views_luke());
@@ -202,7 +208,9 @@ class islandora_solr_views_query extends views_plugin_query {
   }
 
   public function add_sort($field, $order) {
+    dsm('sort!!');
     $this->params['sort'][] = $field . ' ' . $order;
+    dsm($this->params);
   }
 
   public function add_parameter($key, $value) {
