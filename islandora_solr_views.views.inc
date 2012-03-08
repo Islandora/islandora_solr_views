@@ -60,13 +60,33 @@ function islandora_solr_views_views_data() {
 //      ),
 //    );
 
-    // Get the list of the fields in idex directly from Solr.
+    // Get the list of the fields in index directly from Solr.
     //$solr = apachesolr_get_solr();
     //$solr_fields = $solr->getFields(1);
-    //$solr_fields = array('mods_title_s' => 'mods_title_s');
+
     
     $luke = islandora_solr_views_luke(1);
     $solr_fields = $luke['fields'];
+    
+    // always add score handlers    
+    $data[$islandora_solr_base_table]['score'] = array(
+        'title' => t('Score'),
+        'help' => t('Relevancy score'),
+        'field' => array(
+          'handler' => 'islandora_solr_views_handler_field',
+          'click sortable' => TRUE,
+        ),
+        'argument' => array(
+          'handler' => 'islandora_solr_views_handler_argument',
+        ),
+        'filter' => array(
+          'handler' => 'islandora_solr_views_handler_filter',
+        ),
+        'sort' => array(
+          'handler' => 'islandora_solr_views_handler_sort',
+        ),
+    );
+    
     foreach ($solr_fields as $solr_field_name => $solr_field) {
 
       // We do not allow to display 'sort_*' fields.
@@ -80,19 +100,19 @@ function islandora_solr_views_views_data() {
       //$field_names = apachesolr_views_field_names($solr_field_name);
 
       $data[$islandora_solr_base_table][$solr_field_name] = array(
-        'title' => $solr_field_name . ' ' . t('Title'),
-        'help' => $solr_field_name . ' ' . t('Help'),
+        'title' => $solr_field_name . ' ' . t('T'),
+        'help' => $solr_field_name . ' ' . t('H'),
         'field' => array(
           'handler' => 'islandora_solr_views_handler_field',
           'click sortable' => TRUE,
         ),
         // Information for accepting a nid as an argument
-//        'argument' => array(
-//          'handler' => 'views_handler_argument_node_nid',
-//          'name field' => 'title', // the field to display in the summary.
-//          'numeric' => TRUE,
-//          'validate type' => 'nid',
-//        ),
+        'argument' => array(
+          'handler' => 'islandora_solr_views_handler_argument',
+          //'name field' => 'title', // the field to display in the summary.
+          //'numeric' => TRUE,
+          //'validate type' => 'nid',
+        ),
         'filter' => array(
           'handler' => 'islandora_solr_views_handler_filter',
         ),

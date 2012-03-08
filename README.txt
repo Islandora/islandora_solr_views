@@ -19,7 +19,8 @@ apachesolr_views: http://drupal.org/project/apachesolr_views
 
 
 Done - @TODO: get proper data structure cached with luke.
-Done: - @TODO: fix pager. Use views settings
+Done - @TODO: manually add 'count' handler support.
+Done - @TODO: fix pager. Use views settings
 @TODO: Move luke function into islandora_solr_search API
 @TODO: Pull in human readable names (and help texts?) for islandora solr views handlers
 @TODO: fix query
@@ -30,7 +31,12 @@ Done: - @TODO: fix pager. Use views settings
 @TODO: provide handler sorting
 @TODO: automatically replaced the dots in default values of exposed filter parameters. Maybe that should be added on form validate too.
 @TODO: (exposed) filters only work with AND statements, not with OR.
-@TODO: manually add 'count' handler support.
+@TODO: Queries don't return any score because it's not added in the query.
+       In the future maybe we can pull that out of islandora_solr_search? Because
+       we won't be using dismax in the views query we might be able to add it per field handler?
+@TODO: Clean up islandora_solr_views.module
+
+
 
 
 /solr/select?start=0

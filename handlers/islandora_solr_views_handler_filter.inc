@@ -1,9 +1,16 @@
 <?php
 
+// include common.inc for lesser_escape())
+// @TODO: call this somewhere else?
+module_load_include('inc', 'islandora_solr_search', 'includes/common');
+
 class islandora_solr_views_handler_filter extends views_handler_filter {
   function query() {
     if (!empty($this->value)) {
       $value = $this->value;
+      
+      $value = lesser_escape($value);
+      
       $fieldname = $this->field;
 
       if (is_array($value)) {

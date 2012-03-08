@@ -45,7 +45,7 @@ class islandora_solr_views_query extends views_plugin_query {
     }
 
     // Add fields to the query so they will be shown in solr document.
-    dsm($this->params);
+    //dsm($this->params);
     $this->params['fl'] = array_keys($view->field);
   }
 
