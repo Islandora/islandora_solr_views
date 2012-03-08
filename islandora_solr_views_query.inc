@@ -45,6 +45,7 @@ class islandora_solr_views_query extends views_plugin_query {
     }
 
     // Add fields to the query so they will be shown in solr document.
+    dsm($this->params);
     $this->params['fl'] = array_keys($view->field);
   }
 
@@ -208,9 +209,9 @@ class islandora_solr_views_query extends views_plugin_query {
   }
 
   public function add_sort($field, $order) {
-    dsm('sort!!');
+    //dsm('sort!!');
     $this->params['sort'][] = $field . ' ' . $order;
-    dsm($this->params);
+    //dsm($this->params);
   }
 
   public function add_parameter($key, $value) {

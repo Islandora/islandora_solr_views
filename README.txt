@@ -30,7 +30,7 @@ Done: - @TODO: fix pager. Use views settings
 @TODO: provide handler sorting
 @TODO: automatically replaced the dots in default values of exposed filter parameters. Maybe that should be added on form validate too.
 @TODO: (exposed) filters only work with AND statements, not with OR.
-
+@TODO: manually add 'count' handler support.
 
 
 /solr/select?start=0

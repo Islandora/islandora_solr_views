@@ -37,7 +37,7 @@ function islandora_solr_views_views_data() {
       'title' => t('Islandora Solr @name', array('@name' => $name)),
       'help' => t('Searches the site with the Islandora Solr search engine for @name', array('@name' => $name)),
       'field' => $base_field,
-      'entity type' => 'node',
+      'entity type' => 'fedora object',
     );
 
 //    $data[$apachesolr_base_table]['text'] = array(
@@ -103,7 +103,7 @@ function islandora_solr_views_views_data() {
     }
 
   }
-//  dsm($data);
+  dsm($data);
   return $data;
 }
 
