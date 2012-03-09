@@ -37,7 +37,9 @@ Done - @TODO: provide handler sorting
        we won't be using dismax in the views query we might be able to add it per field handler?
 @TODO: Clean up islandora_solr_views.module
 @TODO: fix odd space issue when filtering value with a space (both _s and _it)
-
+@TODO: currently the views queries are set to *:* and non-dismax for clean, targeted searches.
+       Alternatively if we could use views results in our normal searches. We could
+       use a query, dismax and call IslandoraSolrQueryProcessor::buildAndExecuteQuery() so facet blocks are created.
 
 
 /solr/select?start=0

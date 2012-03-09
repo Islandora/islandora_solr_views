@@ -85,12 +85,16 @@ class islandora_solr_views_query extends views_plugin_query {
 
       // Add fields.
       if (isset($this->params['fl'])) {
+        //dsm($this->params['fl']);
+        // always return PID
+        if (!in_array('PID', $this->params['fl'])) {
+          $this->params['fl'][] = 'PID';
+        }
         $params['fl'] = implode(',', $this->params['fl']);
       }
 
       // Add filters to parameters.
       if (isset($this->params['filters'])) {
-        dsm($this->params);
         $params['fq'] = $this->params['filters'];
       }
 
@@ -113,20 +117,14 @@ class islandora_solr_views_query extends views_plugin_query {
 //        $query->addParams($params);
 //      }
 
-      //apachesolr_search_add_boost_params($query);
-      //list($final_query, $response) = apachesolr_do_query($query, $this->pager->current_page);
-      //apachesolr_has_searched(TRUE);
 
-      //dsm($this);
-//      dsm($params);
-//      dsm($this);
-//      dsm($this->params);
-//      dsm($this->get_params());
-      //global $_islandora_solr_search_queryclass;
-    
       $query = '*:*';
       $fq = '-';
       $dismax = NULL;
+      
+      
+      //$query = 'california';
+      //$dismax = 'dismax';
       
       // new query class
       $queryclass = new IslandoraSolrQueryProcessor();
@@ -135,8 +133,8 @@ class islandora_solr_views_query extends views_plugin_query {
     
       // set dismax or not. (later: probably not)
       if ($dismax != NULL) {
-        $this->solrDefType = $dismax;
-        $this->solrParams['defType'] = $dismax;
+        $queryclass->solrDefType = $dismax;
+        $params['defType'] = $dismax;
       }
 
       $queryclass->solrLimit = $this->pager->options['items_per_page'];
@@ -234,9 +232,22 @@ class islandora_solr_views_query extends views_plugin_query {
             'vid', 'timestamp'
         ));
     }
+    
+    if ($table == 'islandora_solr_object') {
+      return drupal_map_assoc(
+        array('PID', 'dc.title'
+        ));
+    }
+    
+    
+    
   }
 
   public function get_params() {
     return $this->params;
+  }
+  
+  public function test() {
+    return 'test works';
   }
 }

@@ -37,7 +37,7 @@ function islandora_solr_views_views_data() {
       'title' => t('Islandora Solr @name', array('@name' => $name)),
       'help' => t('Searches the site with the Islandora Solr search engine for @name', array('@name' => $name)),
       'field' => $base_field,
-      'entity type' => 'fedora object',
+      //'entity type' => 'fedora object',  // do we really need this?
     );
 
 //    $data[$apachesolr_base_table]['text'] = array(
