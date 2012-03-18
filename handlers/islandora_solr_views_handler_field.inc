@@ -2,6 +2,12 @@
 
 class islandora_solr_views_handler_field extends views_handler_field {
 
+  /**
+   * Class init
+   * 
+   * @param type $view
+   * @param type $options 
+   */
   function init(&$view, &$options) {
     parent::init($view, $options);
     // Don't add the additional fields to groupby
@@ -13,15 +19,24 @@ class islandora_solr_views_handler_field extends views_handler_field {
        
   }
   
+  /**
+   * Get value
+   * 
+   * @param type $values
+   * @param type $field
+   * @return type string 
+   */
   function get_value($values, $field = NULL) {
-//    dsm($values);
-//    dsm($field);
+
     $alias = isset($field) ? $this->aliases[$field] : $this->field_alias;
     if (isset($values->{$alias})) {
       return $values->{$alias};
     }
   }
 
+  /**
+   * Define new option
+   */
   function option_definition() {
     $options = parent::option_definition();
     $options['link_to_object'] = TRUE;
@@ -29,7 +44,7 @@ class islandora_solr_views_handler_field extends views_handler_field {
   }
   
   /**
-   * Provide link to object option
+   * Define form element for 'link to object' option
    */
   function options_form(&$form, &$form_state) {
     $form['link_to_object'] = array(
@@ -49,8 +64,7 @@ class islandora_solr_views_handler_field extends views_handler_field {
    * Data should be made XSS safe prior to calling this function.
    */
   function render_link($data, $values) {
-    //dsm($this->additional_fields);
-    //dsm($this->additional_fields);
+
     if (!empty($this->options['link_to_object']) && !empty($this->additional_fields['PID'])) {
       if ($data !== NULL && $data !== '') {
         $this->options['alter']['make_link'] = TRUE;
@@ -73,6 +87,11 @@ class islandora_solr_views_handler_field extends views_handler_field {
     return $data;
   }
   
+  /**
+   *
+   * @param type $values
+   * @return type string Rendered value
+   */
   function render($values) {
     $value = $this->get_value($values);
     return $this->render_link($this->sanitize_value($value), $values);

@@ -18,29 +18,76 @@ apachesolr_views: http://drupal.org/project/apachesolr_views
 
 
 
-Done - @TODO: get proper data structure cached with luke.
-Done - @TODO: manually add 'count' handler support.
-Done - @TODO: fix pager. Use views settings
-Done - @TODO: provide handler fields
-Done - @TODO: provide handler filtering
-Done - @TODO: provide handler contextual filtering
-Done - @TODO: provide handler sorting
+
 @TODO: Finetune/debug all handlers.
+-> solr field types:
+string - boolean
+integer - long - float - double
+sint - slong - sfloat - sdouble
+text - fgs_text - text_ws - textTight
+date
+alphaOnlySort
+ignored
 @TODO: Move luke function into islandora_solr_search API
 @TODO: Pull in human readable names (and help texts?) for islandora solr views handlers
 @TODO: fix query
 @TODO: fix results rendering. empty results, arrays, etc..
 @TODO: automatically replaced the dots in default values of exposed filter parameters. Maybe that should be added on form validate too.
 @TODO: (exposed) filters only work with AND statements, not with OR.
-@TODO: Queries don't return any score because it's not added in the query.
-       In the future maybe we can pull that out of islandora_solr_search? Because
-       we won't be using dismax in the views query we might be able to add it per field handler?
+@TODO: Relevancy score handler always return 1 because there is no query given. 
 @TODO: Clean up islandora_solr_views.module
 @TODO: fix odd space issue when filtering value with a space (both _s and _it)
 @TODO: currently the views queries are set to *:* and non-dismax for clean, targeted searches.
        Alternatively if we could use views results in our normal searches. We could
        use a query, dismax and call IslandoraSolrQueryProcessor::buildAndExecuteQuery() so facet blocks are created.
+       
+@TODO: add field handler for date formatting. (with date module api?)
+@TODO: field with simple link to object. Form: 'text to display'
+@TODO: formatter options on strings and text field handlers: default/drupalformatters/plaintext/trimmed?
+@TODO: formatting for boolean: TRUE/FALSE, YES/NO 1/0
 
+@TODO: field handler: datastream URL
+@TODO: field handler: datastream rendered media types: image, text, pdf, video, audio, playlists, swf object, csv, metadata datastream as formatted table
+image => output in img element, can be linked to object. DS = TN or user input
+text => .txt file rendered as plain text. can be linked to object. DS = user input
+pdf => text = user input? DS = User input
+video => basic html5 support? DS = user input
+audio => basic html5 support? DS = user input
+playlists => would be a different view type?
+swf object => embedding wrapper. DS = user input
+csv => as formatted table. DS = user input. (multiple formatted tables would almost never look good though.)
+XML metadata datastream => as formatted table. DS = DC, MODS, FGS or user input.
+
+For all media types, Shadowbox support?
+Need encoded titles for media objects.
+
+@TODO: support for multivalued fields
+
+
+
+To do after islandora api rewrite:
+@TODO: field handler: purge/delete object link
+@TODO: field handler: edit object link
+@TODO: field handler: url alias (when url alias support will be added to islandora)
+
+
+@TODO: contextual filter: would single dismax query be possible or appropriate?
+
+@TODO: how are fedora object access settings set? As a field or when rendering the results?
+
+
+
+Done - @TODO: get proper data structure cached with luke.
+Done - @TODO: manually add 'count' handler support.
+Done - @TODO: fix pager. Use views settings
+Done - @TODO: provide basic handler fields
+Done - @TODO: provide basic handler filtering
+Done - @TODO: provide basic handler contextual filtering
+Done - @TODO: provide basic handler sorting
+Done - @TODO: added score handler
+
+Sample solr query
+=================
 
 /solr/select?start=0
 &rows=2
