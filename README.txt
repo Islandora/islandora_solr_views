@@ -9,7 +9,7 @@ Usage
 -----
 Use with:
 - views 3
-- islandora_solr_search D7: https://github.com/Islandora/islandora_solr_search/tree/7.x (is a prototype as well)
+- islandora_solr D7: https://github.com/Islandora/islandora_solr/tree/7.x (is a prototype as well)
 
 
 Inspired by
@@ -28,7 +28,7 @@ text - fgs_text - text_ws - textTight
 date
 alphaOnlySort
 ignored
-@TODO: Move luke function into islandora_solr_search API
+@TODO: Move luke function into islandora_solr API
 @TODO: Pull in human readable names (and help texts?) for islandora solr views handlers
 @TODO: fix query
 @TODO: fix results rendering. empty results, arrays, etc..

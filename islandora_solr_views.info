@@ -6,7 +6,7 @@ php = 5.2
 version = "7.x-1.x-dev"
 project = "islandora_solr_views"
 
-dependencies[] = islandora_solr_search
+dependencies[] = islandora_solr
 dependencies[] = views
 
 files[] = islandora_solr_views.module

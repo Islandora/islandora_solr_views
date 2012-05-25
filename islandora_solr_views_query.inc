@@ -63,9 +63,9 @@ class islandora_solr_views_query extends views_plugin_query {
       $start = microtime(TRUE);
       
       // include IslandoraSolrQueryProcessor
-      module_load_include('inc', 'islandora_solr_search', 'IslandoraSolrQueryProcessor');
+      module_load_include('inc', 'islandora_solr', 'IslandoraSolrQueryProcessor');
       // include common.inc
-      module_load_include('inc', 'islandora_solr_search', 'includes/common');
+      module_load_include('inc', 'islandora_solr', 'includes/common');
 
 
       

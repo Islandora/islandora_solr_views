@@ -2,7 +2,7 @@
 
 // include common.inc for lesser_escape())
 // @TODO: call this somewhere else?
-module_load_include('inc', 'islandora_solr_search', 'includes/common');
+module_load_include('inc', 'islandora_solr', 'includes/common');
 
 class islandora_solr_views_handler_filter extends views_handler_filter {
   function query() {
