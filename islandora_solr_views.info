@@ -1,4 +1,4 @@
-name = Islandora Solr Views Integration
+name = Islandora Solr Views
 description = Provides Islandora Solr Integration with Views
 package = Islandora Search
 core = "7.x"
