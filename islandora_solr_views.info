@@ -1,6 +1,6 @@
 name = Islandora Solr Views Integration
 description = Provides Islandora Solr Integration with Views
-package = Islandora Solr
+package = Islandora Search
 core = "7.x"
 php = 5.2
 version = "7.x-1.x-dev"
