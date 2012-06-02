@@ -3,18 +3,42 @@ Islandora Solr Views
 
 DO NOT USE! THIS MODULE IS IN PROTOTYPE STAGE!
 
-Exposes Islandora Solr Search results into a drupal view.
+Exposes Islandora Solr results through a drupal view.
 
 Usage
 -----
 Use with:
 - views 3
-- islandora_solr D7: https://github.com/Islandora/islandora_solr/tree/7.x (is a prototype as well)
+- islandora_solr D7: https://github.com/Islandora/islandora_solr/tree/7.x
 
 
 Inspired by
 -----------
 apachesolr_views: http://drupal.org/project/apachesolr_views
+
+
+
+
+TODO:
+=====
+
+High priority
+-------------
+
+
+
+Normal Priority
+---------------
+
+- Pull in human readable names (and help texts?) for islandora solr views handlers
+
+
+Low Priority
+------------
+
+
+
+
 
 
 
@@ -28,14 +52,11 @@ text - fgs_text - text_ws - textTight
 date
 alphaOnlySort
 ignored
-@TODO: Move luke function into islandora_solr API
-@TODO: Pull in human readable names (and help texts?) for islandora solr views handlers
-@TODO: fix query
+
 @TODO: fix results rendering. empty results, arrays, etc..
 @TODO: automatically replaced the dots in default values of exposed filter parameters. Maybe that should be added on form validate too.
 @TODO: (exposed) filters only work with AND statements, not with OR.
 @TODO: Relevancy score handler always return 1 because there is no query given. 
-@TODO: Clean up islandora_solr_views.module
 @TODO: fix odd space issue when filtering value with a space (both _s and _it)
 @TODO: currently the views queries are set to *:* and non-dismax for clean, targeted searches.
        Alternatively if we could use views results in our normal searches. We could
@@ -76,15 +97,6 @@ To do after islandora api rewrite:
 @TODO: how are fedora object access settings set? As a field or when rendering the results?
 
 
-
-Done - @TODO: get proper data structure cached with luke.
-Done - @TODO: manually add 'count' handler support.
-Done - @TODO: fix pager. Use views settings
-Done - @TODO: provide basic handler fields
-Done - @TODO: provide basic handler filtering
-Done - @TODO: provide basic handler contextual filtering
-Done - @TODO: provide basic handler sorting
-Done - @TODO: added score handler
 
 Sample solr query
 =================

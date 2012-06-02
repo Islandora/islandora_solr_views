@@ -14,13 +14,14 @@ function islandora_solr_views_views_api() {
 }
 
 /**
- * Implementation of hook_islandora_solr_entities().
+ * Implements hook_islandora_solr_entities().
+ *
  * This is done for apachesolr_search module.
  */
 function islandora_solr_views_islandora_solr_entities() {
   return array(
     'object' => array(
-      'name' => 'Fedora Object',
+      'name' => 'Islandora object',
       'base_field' => 'PID',
     ),
   );
@@ -35,111 +36,26 @@ function islandora_solr_views_islandora_solr_entities() {
  */
 function islandora_solr_views_preprocess_views_view_field(&$vars) {
 
-  $field = $vars['field'];
-
-  if ($field->view->name != 'mip_search_apachesolr') {
-    return;
-  }
-
-  $field_name = $field->field;
-  $node = $vars['row']->node;
-
-  $apachesolr_field_name = islandora_solr_views_field_names_map($field_name);
-
-  // Customization for Services field.
-  if ($field_name == 'field_mip_services') {
-    $apachesolr_field_name = 'tm_vid_7_names';
-  }
-
-  if (isset($node->{$apachesolr_field_name})) {
-    $vars['output'] = $node->{$apachesolr_field_name};
-  }
-
-  if (is_array($vars['output'])) {
-    $vars['output'] = implode(' ', $vars['output']);
-  }
-
-//  dpm($field_name, 'field_name');
-//  dpm($apachesolr_field_name, 'apachesolr_field_name');
-//  dpm($vars['output'], 'vars output');
-}
-
-/**
- * Helper. Return apachesolr field name by drupal field name.
- *
- * @param string $field_name
- *   Drupal field name.
- * @return string
- *   Apachesolr field name.
- */
-function islandora_solr_views_field_names_map($field_name) {
-  $map = &drupal_static(__FUNCTION__, array());
-
-  if (empty($map)) {
-    foreach (apachesolr_entity_fields('node') as $apachesolr_field_name => $apachesolr_field) {
-      $field_name = $apachesolr_field['field']['field_name'];
-      $map[$field_name] = $apachesolr_field_name;
-    }
-  }
-
-  if (isset($map[$field_name])) {
-    return $map[$field_name];
-  }
 }
 
 
-/**
- * Implements hook_views_pre_execute().
- *
- * @param type $view
- */
-function islandora_solr_views_views_post_execute($view) {
-  if (!key_exists('apachesolr_area', $view->header)) {
-    return;
-  }
 
-  $output_string = 'Your search returned @count results';
-  $output_string_singular = 'Your search returned one result';
-  $output_string_arguments = array();
 
-  $apachesolr_params = $view->query->get_params();
-  if (isset($apachesolr_params['q']) && !empty($apachesolr_params['q'])) {
-    $search_string = $apachesolr_params['q'];
-    // Strip wildcards if we used dismax handler. But we cannot determine at
-    // the moment what handler we use.
-//    if (isset($apachesolr_params['defType']) && $apachesolr_params['defType'] == 'dismax') {
-      $search_string_array = explode(' ', $search_string);
-      $search_string_array_stripped = array();
-      foreach ($search_string_array as $element) {
-        $search_string_array_stripped[] = trim($element, '*');
-      }
-      $search_string = implode(' ', $search_string_array_stripped);
-//    }
-    $output_string = 'Your search for \'!search_string\' returned @count results';
-    $output_string_singular = 'Your search for \'!search_string\' returned one result';
-    $output_string_arguments['!search_string'] = $search_string;
-  }
-
-  foreach ($view->header as $key => $header) {
-    if (strpos($key, 'apachesolr_area') !== FALSE) {
-      $view->header[$key]->options['content'] = '<div class="apachesolr-results">' . format_plural($view->total_rows, $output_string_singular, $output_string, $output_string_arguments) . '</div>';
-    }
-  }
-}
-
+// debugging on the front page
 function islandora_solr_views_init() {
   if (drupal_is_front_page()) {
       global $_islandora_solr_queryclass;
-      //islandora_solr_init();
-      // include IslandoraSolrQueryProcessor
-      module_load_include('inc', 'islandora_solr', 'IslandoraSolrQueryProcessor');
-    
-      $query = 'california';
+      
+      $query = 'island';
       $fq = '-';
       $dismax = 'dismax';
       
       $_islandora_solr_queryclass = new IslandoraSolrQueryProcessor();
-      $_islandora_solr_queryclass->buildAndExecuteQuery($query, $fq, $dismax);
+      $_islandora_solr_queryclass->solrQuery = $query;
+      $_islandora_solr_queryclass->solrParams['defType'] = 'dismax';
+      $_islandora_solr_queryclass->solrParams['qt'] = 'standard';
+      $_islandora_solr_queryclass->solrParams['qf'] = 'dc.title^5 dc.subject^2 dc.description^2 dc.creator^2 dc.contributor^1 dc.type';
+      $_islandora_solr_queryclass->executeQuery();
       
       // results
       $results = $_islandora_solr_queryclass->solrResult;
@@ -149,54 +65,7 @@ function islandora_solr_views_init() {
       dsm($_islandora_solr_queryclass);
       
   //echo urldecode('﻿/solr/select?start=0&rows=2&&fl=label%2Ccontent%2Centity_id%2Cid%2Css_name%2Cds_created%2Css_language%2Cim_vid_2%2Ctid%2Cid%2Centity_id%2Centity_type%2Cbundle%2Cbundle_name%2Clabel%2Cis_comment_count%2Cds_created%2Cds_changed%2Cscore%2Cpath%2Curl%2Cis_uid%2Ctos_name%2Ctm_node&qf=taxonomy_names%5E2.0&qf=label%5E5.0&qf=content%5E40&qf=tos_name%5E3.0&qf=tos_content_extra%5E0.1&facet=true&facet.sort=count&facet.mincount=1&facet.field=im_field_tags&facet.field=im_field_content_model&facet.field=is_uid&facet.field=ss_language&facet.field=bundle&f.im_field_tags.facet.limit=50&f.im_field_tags.facet.mincount=1&f.im_field_content_model.facet.limit=50&f.im_field_content_model.facet.mincount=1&facet.date=ds_changed&facet.date=ds_created&f.ds_changed.facet.date.start=2012-02-26T00%3A00%3A00Z%2FDAY&f.ds_changed.facet.date.end=2012-03-02T00%3A00%3A00Z%2B1DAY%2FDAY&f.ds_changed.facet.date.gap=%2B1DAY&f.ds_changed.facet.limit=50&f.ds_created.facet.date.start=2012-02-26T01%3A54%3A00Z%2FMINUTE&f.ds_created.facet.date.end=2012-02-26T02%3A24%3A00Z%2B1MINUTE%2FMINUTE&f.ds_created.facet.date.gap=%2B1MINUTE&f.ds_created.facet.limit=50&f.is_uid.facet.limit=50&f.is_uid.facet.mincount=1&f.ss_language.facet.limit=50&f.ss_language.facet.mincount=1&f.bundle.facet.limit=50&f.bundle.facet.mincount=1&wt=json&json.nl=map');
-  $luke = islandora_solr_views_luke(10);
-  dsm($luke['fields']['mods_dateIssued_dt']['type']);
+  $luke = islandora_solr_get_luke();
+  dsm($luke);
   }
 }
-
-/**
- * Function to get luke (should be implemented in islandora_solr api later)
- */
-function islandora_solr_views_luke($num_terms = 10) {
-  
-  // create url
-  $luke_url = variable_get('islandora_solr_url', 'localhost:8080/solr') . '/admin/luke?wt=json&numTerms=' . $num_terms; //?wt=json
-  // get file content (= json string)
-  $luke_json = file_get_contents($luke_url, 0, NULL, NULL);
-
-  // decode json to php array
-  $luke_array = json_decode($luke_json, TRUE);
-
-  return $luke_array;
-  
-}
-
-
-//
-//function islandora_solr_views_form_alter(&$form, &$form_state, $form_id) {
-//  
-//  switch($form_id) {
-//    case 'views_exposed_form':
-//      // only validate on islandora_solr_node views.
-//      if ($form_state['view']->base_table == 'islandora_solr_object') {
-//        $form['#validate'][] = 'islandora_solr_views_lesser_escape';
-//      } 
-//      break;
-//  }
-//
-//}
-//
-//function islandora_solr_views_lesser_escape($form, &$form_state) {
-//  
-//  // include common.inc for lesser_escape())
-//  module_load_include('inc', 'islandora_solr', 'includes/common');
-//
-//  // all parameters
-//  foreach ($form_state['view']->exposed_input as $key => $value) {
-//    // check if the parameter is part of the exposed view.
-//    if (isset($form_state['values'][$key])) {
-//      $form_state['values'][$key] = lesser_escape($form_state['values'][$key]);
-//      //$form_state['values'][$key] = lesser_escape($value);  
-//    }
-//  }
-//}

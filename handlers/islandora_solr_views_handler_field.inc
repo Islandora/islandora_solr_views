@@ -16,7 +16,6 @@ class islandora_solr_views_handler_field extends views_handler_field {
       $this->additional_fields['PID'] = array('table' => 'islandora_solr_object', 'field' => 'PID');
       //dsm($this->additional_fields);
     }
-       
   }
   
   /**
@@ -48,7 +47,7 @@ class islandora_solr_views_handler_field extends views_handler_field {
    */
   function options_form(&$form, &$form_state) {
     $form['link_to_object'] = array(
-      '#title' => t('Link this field to the original piece of content'),
+      '#title' => t('Link field to object.'),
       '#description' => t("Enable to override this field's links."),
       '#type' => 'checkbox',
       '#default_value' => !empty($this->options['link_to_object']),
@@ -68,17 +67,7 @@ class islandora_solr_views_handler_field extends views_handler_field {
     if (!empty($this->options['link_to_object']) && !empty($this->additional_fields['PID'])) {
       if ($data !== NULL && $data !== '') {
         $this->options['alter']['make_link'] = TRUE;
-        $this->options['alter']['path'] = "fedora/repository/" . $this->get_value($values, 'PID');
-//        if (isset($this->aliases['language'])) {
-//          $languages = language_list();
-//          $language = $this->get_value($values, 'language');
-//          if (isset($languages[$language])) {
-//            $this->options['alter']['language'] = $languages[$language];
-//          }
-//          else {
-//            unset($this->options['alter']['language']);
-//          }
-//        }
+        $this->options['alter']['path'] = 'islandora/object/' . $this->get_value($values, 'PID');
       }
       else {
         $this->options['alter']['make_link'] = FALSE;

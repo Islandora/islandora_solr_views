@@ -26,6 +26,7 @@ function islandora_solr_views_views_plugins() {
  * Implementation of hook_views_data().
  */
 function islandora_solr_views_views_data() {
+  
   foreach (module_invoke_all('islandora_solr_entities') as $base_table => $definition) {
     $name = $definition['name'];
     $base_field = $definition['base_field'];
@@ -64,8 +65,8 @@ function islandora_solr_views_views_data() {
     //$solr = apachesolr_get_solr();
     //$solr_fields = $solr->getFields(1);
 
+    $luke = islandora_solr_get_luke();
     
-    $luke = islandora_solr_views_luke(1);
     $solr_fields = $luke['fields'];
     
     // always add score handlers    
@@ -95,13 +96,13 @@ function islandora_solr_views_views_data() {
       }
 
       $field_type = $solr_field['type'];
-//      $field_type = 'field_type';
-
-      //$field_names = apachesolr_views_field_names($solr_field_name);
-
+      $field_schema = $solr_field['schema'];
+      $field_dynamicbase = isset($solr_field['dynamicBase']) ? $solr_field['dynamicBase'] : NULL;
+      
+      
       $data[$islandora_solr_base_table][$solr_field_name] = array(
-        'title' => $solr_field_name . ' ' . t('T'),
-        'help' => $solr_field_name . ' ' . t('H'),
+        'title' => $solr_field_name,
+        'help' => t('Type') . ': ' .$field_type,
         'field' => array(
           'handler' => 'islandora_solr_views_handler_field',
           'click sortable' => TRUE,
@@ -123,7 +124,6 @@ function islandora_solr_views_views_data() {
     }
 
   }
-  dsm($data);
   return $data;
 }
 

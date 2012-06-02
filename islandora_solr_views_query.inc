@@ -62,13 +62,9 @@ class islandora_solr_views_query extends views_plugin_query {
     try {
       $start = microtime(TRUE);
       
-      // include IslandoraSolrQueryProcessor
-      module_load_include('inc', 'islandora_solr', 'IslandoraSolrQueryProcessor');
       // include common.inc
       module_load_include('inc', 'islandora_solr', 'includes/common');
 
-
-      
       // Execute the search.
       $params = array();
       if (isset($this->params['q'])) {
@@ -80,12 +76,11 @@ class islandora_solr_views_query extends views_plugin_query {
 
       // If we display all items without pager.
       if ($params['rows'] == 0) {
-        $params['rows'] = 100000;
+        $params['rows'] = 1000000;
       }
 
       // Add fields.
       if (isset($this->params['fl'])) {
-        //dsm($this->params['fl']);
         // always return PID
         if (!in_array('PID', $this->params['fl'])) {
           $this->params['fl'][] = 'PID';
@@ -99,66 +94,46 @@ class islandora_solr_views_query extends views_plugin_query {
       }
 
       // Add sorting.
-//      $solrsort = '';
       if (isset($this->params['sort'])) {
         $params['sort'] = implode(', ', $this->params['sort']);
         // sample sort parameters: q=video&sort=inStock asc, price desc
-        
       }
 
-      // Load search query and execute it.
-//      $solr = apachesolr_get_solr();
-//      $query = new SolrBaseQuery('apachesolr', $solr, $params, $solrsort, '');
-
-//      $params = array(
-//        'fl' => array('id', 'entity_id', 'entity_type', 'bundle', 'bundle_name', 'label', 'is_comment_count', 'ds_created', 'ds_changed', 'score', 'path', 'url', 'is_uid', 'tos_name'),
-//      );
-//      if ($query) {
-//        $query->addParams($params);
-//      }
-
-
+      // by default return all results
       $query = '*:*';
-      $fq = '-';
+      // by default, don't use dismax
       $dismax = NULL;
-      
-      
-      //$query = 'california';
-      //$dismax = 'dismax';
-      
-      // new query class
-      $queryclass = new IslandoraSolrQueryProcessor();
-      // @TODO: remove this later. build entire query - I'm going to do it manually
-      //$queryclass->buildQuery($query, $fq, $dismax);
-    
-      // set dismax or not. (later: probably not)
+
+      // new query processor class
+      $islandoraSolrQuery = new IslandoraSolrQueryProcessor();
+
+      // check for dismax (not functional yet)
       if ($dismax != NULL) {
-        $queryclass->solrDefType = $dismax;
+        $islandoraSolrQuery->solrDefType = $dismax;
         $params['defType'] = $dismax;
       }
 
-      $queryclass->solrLimit = $this->pager->options['items_per_page'];
-      
-      $queryclass->solrStart = max(0, $this->pager->current_page) * $queryclass->solrLimit;
-      $queryclass->solrQuery = restore_slashes($query);
-      $queryclass->solrParams = $params;
-      //dsm($queryclass->solrParams);
+      // add solr limit
+      $islandoraSolrQuery->solrLimit = $this->pager->options['items_per_page'];
+      // add solr start
+      $islandoraSolrQuery->solrStart = max(0, $this->pager->current_page) * $islandoraSolrQuery->solrLimit;
+      // add query (defaults to *:*)
+      $islandoraSolrQuery->solrQuery = restore_slashes($query);
+      // add solr parameters
+      $islandoraSolrQuery->solrParams = $params;
+
       // excecute query
-      $queryclass->executeQuery();
+      $islandoraSolrQuery->executeQuery();
       
       // results
-      $results = $queryclass->solrResult;
-      $rawResponse = $results->getRawResponse();
-      $response_array = json_decode($rawResponse, TRUE);
+      $results = $islandoraSolrQuery->solrResult;
+      $raw_response = $results->getRawResponse();
+      $response_array = json_decode($raw_response, TRUE);
       dsm($response_array);
-      //dsm($queryclass);      
-      
-      //dsm(islandora_solr_views_luke());
       
       // This is needed for removing errors in standard field handler.
       // When we move to our custom field handlers this won't be needed.
-      // @see views_handler_field_field.inc line 600.
-      
+      // @see views_handler_field_field.inc line 600. 
       foreach ($response_array['response']['docs'] as $result_item) {
         //dsm($result_item);
         $result_item['mods_title_s'] = (isset($result_item['mods_title_s'][0])) ? $result_item['mods_title_s'][0] : '';
@@ -167,10 +142,8 @@ class islandora_solr_views_query extends views_plugin_query {
         
         $view->result[] = (object) $result_item;
       }
-
       
-      
-      // Store apachesolr cached response.
+      // Store response
       $this->islandora_solr_response = $response_array;
 
       // Store the results.
