@@ -25,12 +25,15 @@ TODO:
 High priority
 -------------
 
-- support for multivalued fields
 
 
 Normal Priority
 ---------------
 
+
+- Query parser filter should also work as an argument
+- Query parser filter should work with dismax (checkbox?)
+- expose options how to handle multivalued fields
 - Pull in human readable names (and help texts?) for islandora solr views handlers
 - field reorder not working??
 
