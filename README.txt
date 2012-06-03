@@ -25,6 +25,7 @@ TODO:
 High priority
 -------------
 
+- support for multivalued fields
 
 
 Normal Priority
@@ -38,9 +39,12 @@ Low Priority
 
 
 
+Sorting:
+multiValued="false"
+indexed="true" 
+non-tokenized (no analyzer or single term analyser (KeywordTokenizer))
 
-
-
+M == false, I == true, T == false
 
 
 @TODO: Finetune/debug all handlers.
@@ -82,7 +86,6 @@ XML metadata datastream => as formatted table. DS = DC, MODS, FGS or user input.
 For all media types, Shadowbox support?
 Need encoded titles for media objects.
 
-@TODO: support for multivalued fields
 
 
 

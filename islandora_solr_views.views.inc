@@ -99,28 +99,34 @@ function islandora_solr_views_views_data() {
       $field_schema = $solr_field['schema'];
       $field_dynamicbase = isset($solr_field['dynamicBase']) ? $solr_field['dynamicBase'] : NULL;
       
-      
-      $data[$islandora_solr_base_table][$solr_field_name] = array(
-        'title' => $solr_field_name,
-        'help' => t('Type') . ': ' .$field_type,
-        'field' => array(
-          'handler' => 'islandora_solr_views_handler_field',
-          'click sortable' => TRUE,
-        ),
-        // Information for accepting a nid as an argument
-        'argument' => array(
-          'handler' => 'islandora_solr_views_handler_argument',
-          //'name field' => 'title', // the field to display in the summary.
-          //'numeric' => TRUE,
-          //'validate type' => 'nid',
-        ),
-        'filter' => array(
-          'handler' => 'islandora_solr_views_handler_filter',
-        ),
-        'sort' => array(
-          'handler' => 'islandora_solr_views_handler_sort',
-        ),
+      // set field handlers
+      $field = array ();
+      $field['title'] = $solr_field_name;
+      $field['help'] = t('Type') . ': ' .$field_type;
+      // field handler
+      $field['field']['handler'] = 'islandora_solr_views_handler_field';
+      // check if sortable
+      if (strstr($field_schema, "I") != FALSE AND strstr($field_schema, "M") == FALSE) {
+        $field['field']['click sortable'] = TRUE;
+      }
+      // argument handler
+      $field['argument'] = array(
+        'handler' => 'islandora_solr_views_handler_argument',
       );
+      // filter handler
+      $field['filter'] = array(
+        'handler' => 'islandora_solr_views_handler_filter',
+      );
+      // sortable handler
+      // check if sortable
+      if (strstr($field_schema, "I") != FALSE AND strstr($field_schema, "M") == FALSE) {
+        $field['sort'] = array(
+          'handler' => 'islandora_solr_views_handler_sort',
+        );
+      }
+      // add array
+      $data[$islandora_solr_base_table][$solr_field_name] = $field;
+      
     }
 
   }

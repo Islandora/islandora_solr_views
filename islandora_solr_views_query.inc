@@ -95,7 +95,7 @@ class islandora_solr_views_query extends views_plugin_query {
 
       // Add sorting.
       if (isset($this->params['sort'])) {
-        $params['sort'] = implode(', ', $this->params['sort']);
+        $params['sort'] = implode(',', $this->params['sort']);
         // sample sort parameters: q=video&sort=inStock asc, price desc
       }
 
@@ -183,6 +183,12 @@ class islandora_solr_views_query extends views_plugin_query {
     //dsm('sort!!');
     $this->params['sort'][] = $field . ' ' . $order;
     //dsm($this->params);
+  }
+
+  // called by click sort
+  public function add_orderby($table, $field = NULL, $order = 'ASC', $alias = '', $params = array()) {
+    $this->params['sort'][] = $alias . ' ' . $order;
+    dsm($this->params);
   }
 
   public function add_parameter($key, $value) {
