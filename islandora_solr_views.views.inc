@@ -22,19 +22,6 @@ function islandora_solr_views_views_plugins() {
 
 }
 
-/**
- * Implements hook_islandora_solr_entities().
- *
- * This is done for apachesolr_search module.
- */
-function islandora_solr_views_islandora_solr_entities() {
-  return array(
-    'object' => array(
-      'name' => 'Islandora object',
-      'base_field' => 'PID',
-    ),
-  );
-}
 
 
 
@@ -78,6 +65,16 @@ function islandora_solr_views_views_data() {
       ),
   );
 
+  // include a query parser filter (q)
+  $data[$base_table]['query'] = array(
+    'title' => t('Query Parser'),
+    'help' => t('Query Parser field to perform keyword searches.'),
+    'filter' => array(
+      'handler' => 'islandora_solr_views_handler_filter_query',
+    ),
+  );
+  
+  
   // loop over all solr fields
   foreach ($solr_fields as $solr_field_name => $solr_field) {
 

@@ -12,9 +12,7 @@ class islandora_solr_views_handler_field extends views_handler_field {
     parent::init($view, $options);
     // Don't add the additional fields to groupby
     if (!empty($this->options['link_to_object'])) {
-      //dsm($this->additional_fields);
-      $this->additional_fields['PID'] = array('table' => 'islandora_solr_object', 'field' => 'PID');
-      //dsm($this->additional_fields);
+      $this->additional_fields['PID'] = array('table' => 'islandora_solr', 'field' => 'PID');
     }
   }
   
@@ -26,13 +24,19 @@ class islandora_solr_views_handler_field extends views_handler_field {
    * @return type string 
    */
   function get_value($values, $field = NULL) {
-
     $alias = isset($field) ? $this->aliases[$field] : $this->field_alias;
     if (isset($values->{$alias})) {
-      return $values->{$alias};
+      if (is_array($values->{$alias})) {
+        return implode(", ", $values->{$alias});
+      }
+      else {
+        return $values->{$alias};
+      }
     }
   }
-
+  
+  
+  
   /**
    * Define new option
    */
@@ -55,7 +59,6 @@ class islandora_solr_views_handler_field extends views_handler_field {
 
     parent::options_form($form, $form_state);
   }
-
 
   /**
    * Render whatever the data is as a link to the object.
@@ -86,4 +89,18 @@ class islandora_solr_views_handler_field extends views_handler_field {
     return $this->render_link($this->sanitize_value($value), $values);
   }
   
+  /**
+   * Called to determine what to tell the clicksorter.
+   */
+  function click_sort($order) {
+    $sort_field = (isset($this->definition['click sort field']) ? $this->definition['click sort field'] : $this->real_field);
+    $this->query->add_sort($sort_field, $order);
+  }
+
+  
+  
 }
+
+
+
+  

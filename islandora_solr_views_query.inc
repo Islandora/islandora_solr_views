@@ -67,10 +67,7 @@ class islandora_solr_views_query extends views_plugin_query {
 
       // Execute the search.
       $params = array();
-      if (isset($this->params['q'])) {
-        $params['q'] =  $this->params['q'];
-      }
-
+            
       $params['rows'] = $this->pager->options['items_per_page'];
       $params['start'] = $this->pager->current_page * $this->pager->options['items_per_page'];
 
@@ -98,12 +95,20 @@ class islandora_solr_views_query extends views_plugin_query {
         $params['sort'] = implode(',', $this->params['sort']);
         // sample sort parameters: q=video&sort=inStock asc, price desc
       }
-
-      // by default return all results
-      $query = '*:*';
-      // by default, don't use dismax
+      
+      // set query
+      if (isset($this->params['q'])) {
+        $query = $this->params['q'];
+        dsm($this->params['q']);
+      }
+      else {
+        $query = '*:*';
+      }
+   
+      
+      // for now, don't use dismax
       $dismax = NULL;
-
+      
       // new query processor class
       $islandoraSolrQuery = new IslandoraSolrQueryProcessor();
 
@@ -133,13 +138,6 @@ class islandora_solr_views_query extends views_plugin_query {
       
       // populate views results
       foreach ($response_array['response']['docs'] as $result_item) {
-        // quick fix to deal with multivalue fields
-        // @TODO: make output user configurable
-        foreach ($result_item as $key => $value) {
-          if (is_array($value)) {
-            $result_item[$key] = implode(', ', $value);
-          }
-        }
         $view->result[] = (object) $result_item;
       }
       
@@ -180,15 +178,7 @@ class islandora_solr_views_query extends views_plugin_query {
   }
 
   public function add_sort($field, $order) {
-    //dsm('sort!!');
     $this->params['sort'][] = $field . ' ' . $order;
-    //dsm($this->params);
-  }
-
-  // called by click sort
-  public function add_orderby($table, $field = NULL, $order = 'ASC', $alias = '', $params = array()) {
-    $this->params['sort'][] = $alias . ' ' . $order;
-    dsm($this->params);
   }
 
   public function add_parameter($key, $value) {
@@ -201,32 +191,14 @@ class islandora_solr_views_query extends views_plugin_query {
     }
   }
 
-  public function ensure_table($table, $relationship) {
-    if ($table == 'node') {
-      return drupal_map_assoc(
-        array('title', 'type',
-            'path', 'path_alias', 'uid', 'name', 'created', 'changed',
-            'last_comment_or_change', 'nid', 'status', 'promote', 'moderate',
-            'sticky', 'tnid', 'translate', 'language', 'comment_count', 'tid',
-            'vid', 'timestamp'
-        ));
-    }
-    
-    if ($table == 'islandora_solr_object') {
-      return drupal_map_assoc(
-        array('PID', 'dc.title'
-        ));
-    }
-    
-    
-    
+  public function ensure_table($table, $relationship) {   
+    if ($table == 'islandora_solr') {
+      return drupal_map_assoc(array('PID'));
+    }    
   }
 
   public function get_params() {
     return $this->params;
   }
   
-  public function test() {
-    return 'test works';
-  }
 }
