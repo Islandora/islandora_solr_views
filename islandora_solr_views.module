@@ -13,33 +13,6 @@ function islandora_solr_views_views_api() {
   return array('api' => '3.0');
 }
 
-/**
- * Implements hook_islandora_solr_entities().
- *
- * This is done for apachesolr_search module.
- */
-function islandora_solr_views_islandora_solr_entities() {
-  return array(
-    'object' => array(
-      'name' => 'Islandora object',
-      'base_field' => 'PID',
-    ),
-  );
-}
-
-/**
- * Process a single field within a view.
- *
- * This preprocess function isn't normally run, as a function is used by
- * default, for performance. However, by creating a template, this
- * preprocess should get picked up.
- */
-function islandora_solr_views_preprocess_views_view_field(&$vars) {
-
-}
-
-
-
 
 // debugging on the front page
 function islandora_solr_views_init() {

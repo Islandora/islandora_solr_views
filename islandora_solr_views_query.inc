@@ -125,21 +125,21 @@ class islandora_solr_views_query extends views_plugin_query {
       // excecute query
       $islandoraSolrQuery->executeQuery();
       
-      // results
+      // solr results
       $results = $islandoraSolrQuery->solrResult;
       $raw_response = $results->getRawResponse();
       $response_array = json_decode($raw_response, TRUE);
       dsm($response_array);
       
-      // This is needed for removing errors in standard field handler.
-      // When we move to our custom field handlers this won't be needed.
-      // @see views_handler_field_field.inc line 600. 
+      // populate views results
       foreach ($response_array['response']['docs'] as $result_item) {
-        //dsm($result_item);
-        $result_item['mods_title_s'] = (isset($result_item['mods_title_s'][0])) ? $result_item['mods_title_s'][0] : '';
-        //$result_item['mods_title_s'] = $result_item['PID'];
-        
-        
+        // quick fix to deal with multivalue fields
+        // @TODO: make output user configurable
+        foreach ($result_item as $key => $value) {
+          if (is_array($value)) {
+            $result_item[$key] = implode(', ', $value);
+          }
+        }
         $view->result[] = (object) $result_item;
       }
       

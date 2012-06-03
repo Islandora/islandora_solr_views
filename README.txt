@@ -32,11 +32,15 @@ Normal Priority
 ---------------
 
 - Pull in human readable names (and help texts?) for islandora solr views handlers
-
+- field reorder not working??
 
 Low Priority
 ------------
 
+
+
+
+- Link field to object only apply on non-multivalue fields
 
 
 Sorting:
