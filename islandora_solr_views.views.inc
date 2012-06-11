@@ -65,14 +65,24 @@ function islandora_solr_views_views_data() {
       ),
   );
 
-  // include a query parser filter (q)
-  $data[$base_table]['query'] = array(
-    'title' => t('Query Parser'),
-    'help' => t('Query Parser field to perform keyword searches.'),
+  // include a lucene query parser filter (q)
+  $data[$base_table]['query_lucene'] = array(
+    'title' => t('Query Parser (lucene)'),
+    'help' => t('Query Parser field to perform lucene keyword searches.'),
     'filter' => array(
-      'handler' => 'islandora_solr_views_handler_filter_query',
+      'handler' => 'islandora_solr_views_handler_filter_query_lucene',
     ),
   );
+  
+  // include a dismax query parser filter (q)
+  $data[$base_table]['query_dismax'] = array(
+    'title' => t('Query Parser (dismax)'),
+    'help' => t('Query Parser field to perform dismax keyword searches.'),
+    'filter' => array(
+      'handler' => 'islandora_solr_views_handler_filter_query_dismax',
+    ),
+  );
+  
   
   
   // loop over all solr fields
@@ -106,7 +116,8 @@ function islandora_solr_views_views_data() {
       'handler' => 'islandora_solr_views_handler_filter',
     );
     // sortable handler
-    // check if sortable
+    // check if sortable: must be indexed and can't be multivalued
+    // http://wiki.apache.org/solr/CommonQueryParameters#sort
     if (strstr($field_schema, "I") != FALSE AND strstr($field_schema, "M") == FALSE) {
       $field['sort'] = array(
         'handler' => 'islandora_solr_views_handler_sort',

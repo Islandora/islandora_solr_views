@@ -45,7 +45,6 @@ class islandora_solr_views_query extends views_plugin_query {
     }
 
     // Add fields to the query so they will be shown in solr document.
-    //dsm($this->params);
     $this->params['fl'] = array_keys($view->field);
   }
 
@@ -97,17 +96,21 @@ class islandora_solr_views_query extends views_plugin_query {
       }
       
       // set query
+      $dismax = NULL;
       if (isset($this->params['q'])) {
+        // query
         $query = $this->params['q'];
-        dsm($this->params['q']);
+
+        // dismax
+        if (isset($this->params['defType']) AND $this->params['defType'] == 'dismax') {
+          $dismax = $this->params['defType'];
+          // if no qf fields are specified in the requestHandler a default list is supplied here for dismax searches
+          $params['qf'] = 'dc.title^5 dc.subject^2 dc.description^2 dc.creator^2 dc.contributor^1 dc.type';          
+        }
       }
       else {
         $query = '*:*';
       }
-   
-      
-      // for now, don't use dismax
-      $dismax = NULL;
       
       // new query processor class
       $islandoraSolrQuery = new IslandoraSolrQueryProcessor();
