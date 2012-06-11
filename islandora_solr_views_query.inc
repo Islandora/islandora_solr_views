@@ -11,7 +11,7 @@ class islandora_solr_views_query extends views_plugin_query {
   /**
    * Array of parameters for Solr query.
    */
-  protected $params;
+  protected $params = array();
 
   /**
    * Array of all encountered errors. Each of these is fatal, meaning that a
@@ -39,7 +39,6 @@ class islandora_solr_views_query extends views_plugin_query {
 
     // Set aliases of the fields.
     foreach ($view->field as $field_name => &$field) {
-      //dsm($field);
       $field->field_alias = $field_name;
       $field->aliases['entity_type'] = 'entity_type';
     }
@@ -56,8 +55,7 @@ class islandora_solr_views_query extends views_plugin_query {
    * $view->pager['current_page'].
    */
   public function execute(&$view) {
-    //dsm($view);
-    //dsm($this->params);
+
     try {
       $start = microtime(TRUE);
       
@@ -105,12 +103,13 @@ class islandora_solr_views_query extends views_plugin_query {
         if (isset($this->params['defType']) AND $this->params['defType'] == 'dismax') {
           $dismax = $this->params['defType'];
           // if no qf fields are specified in the requestHandler a default list is supplied here for dismax searches
-          $params['qf'] = 'dc.title^5 dc.subject^2 dc.description^2 dc.creator^2 dc.contributor^1 dc.type';          
+          $params['qf'] = 'dc.title^5 dc.subject^2 dc.description^2 dc.creator^2 dc.contributor^1 dc.type';
         }
       }
       else {
         $query = '*:*';
       }
+      
       
       // new query processor class
       $islandoraSolrQuery = new IslandoraSolrQueryProcessor();
@@ -137,7 +136,6 @@ class islandora_solr_views_query extends views_plugin_query {
       $results = $islandoraSolrQuery->solrResult;
       $raw_response = $results->getRawResponse();
       $response_array = json_decode($raw_response, TRUE);
-      dsm($response_array);
       
       // populate views results
       foreach ($response_array['response']['docs'] as $result_item) {

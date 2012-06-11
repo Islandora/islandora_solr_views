@@ -12,33 +12,3 @@
 function islandora_solr_views_views_api() {
   return array('api' => '3.0');
 }
-
-
-// debugging on the front page
-function islandora_solr_views_init() {
-  if (drupal_is_front_page()) {
-      global $_islandora_solr_queryclass;
-      
-      $query = 'island';
-      $fq = '-';
-      $dismax = 'dismax';
-      
-      $_islandora_solr_queryclass = new IslandoraSolrQueryProcessor();
-      $_islandora_solr_queryclass->solrQuery = $query;
-      $_islandora_solr_queryclass->solrParams['defType'] = 'dismax';
-      $_islandora_solr_queryclass->solrParams['qt'] = 'standard';
-      $_islandora_solr_queryclass->solrParams['qf'] = 'dc.title^5 dc.subject^2 dc.description^2 dc.creator^2 dc.contributor^1 dc.type';
-      $_islandora_solr_queryclass->executeQuery();
-      
-      // results
-      $results = $_islandora_solr_queryclass->solrResult;
-      $rawResponse = $results->getRawResponse();
-      $output = json_decode($rawResponse, TRUE);
-      dsm($output);
-      dsm($_islandora_solr_queryclass);
-      
-  //echo urldecode('﻿/solr/select?start=0&rows=2&&fl=label%2Ccontent%2Centity_id%2Cid%2Css_name%2Cds_created%2Css_language%2Cim_vid_2%2Ctid%2Cid%2Centity_id%2Centity_type%2Cbundle%2Cbundle_name%2Clabel%2Cis_comment_count%2Cds_created%2Cds_changed%2Cscore%2Cpath%2Curl%2Cis_uid%2Ctos_name%2Ctm_node&qf=taxonomy_names%5E2.0&qf=label%5E5.0&qf=content%5E40&qf=tos_name%5E3.0&qf=tos_content_extra%5E0.1&facet=true&facet.sort=count&facet.mincount=1&facet.field=im_field_tags&facet.field=im_field_content_model&facet.field=is_uid&facet.field=ss_language&facet.field=bundle&f.im_field_tags.facet.limit=50&f.im_field_tags.facet.mincount=1&f.im_field_content_model.facet.limit=50&f.im_field_content_model.facet.mincount=1&facet.date=ds_changed&facet.date=ds_created&f.ds_changed.facet.date.start=2012-02-26T00%3A00%3A00Z%2FDAY&f.ds_changed.facet.date.end=2012-03-02T00%3A00%3A00Z%2B1DAY%2FDAY&f.ds_changed.facet.date.gap=%2B1DAY&f.ds_changed.facet.limit=50&f.ds_created.facet.date.start=2012-02-26T01%3A54%3A00Z%2FMINUTE&f.ds_created.facet.date.end=2012-02-26T02%3A24%3A00Z%2B1MINUTE%2FMINUTE&f.ds_created.facet.date.gap=%2B1MINUTE&f.ds_created.facet.limit=50&f.is_uid.facet.limit=50&f.is_uid.facet.mincount=1&f.ss_language.facet.limit=50&f.ss_language.facet.mincount=1&f.bundle.facet.limit=50&f.bundle.facet.mincount=1&wt=json&json.nl=map');
-  $luke = islandora_solr_get_luke();
-  dsm($luke);
-  }
-}

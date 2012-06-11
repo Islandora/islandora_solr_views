@@ -94,7 +94,7 @@ class islandora_solr_views_handler_field extends views_handler_field {
    */
   function click_sort($order) {
     $sort_field = (isset($this->definition['click sort field']) ? $this->definition['click sort field'] : $this->real_field);
-    $this->query->add_sort($sort_field, $order);
+    $this->query->add_orderby($sort_field, $order);
   }
 
   
