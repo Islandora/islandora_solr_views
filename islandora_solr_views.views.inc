@@ -65,6 +65,15 @@ function islandora_solr_views_views_data() {
       ),
   );
 
+  // include object manage link
+  $data[$base_table]['islandora_manage'] = array(
+    'title' => t('Manage link'),
+    'help' => t('Provide a simple link to manage the content.'),
+    'field' => array(
+      'handler' => 'islandora_solr_views_handler_field_manage',
+    ),
+  );
+  
   // include a lucene query parser filter (q)
   $data[$base_table]['query_lucene'] = array(
     'title' => t('Query Parser (lucene)'),
@@ -102,7 +111,12 @@ function islandora_solr_views_views_data() {
     $field['title'] = $solr_field_name;
     $field['help'] = t('Type') . ': ' .$field_type;
     // field handler
-    $field['field']['handler'] = 'islandora_solr_views_handler_field';
+    if ($field_type == 'date') {
+      $field['field']['handler'] = 'islandora_solr_views_handler_field_date';  
+    }
+    else {
+      $field['field']['handler'] = 'islandora_solr_views_handler_field';
+    }
     // check if sortable
     if (strstr($field_schema, "I") != FALSE AND strstr($field_schema, "M") == FALSE) {
       $field['field']['click sortable'] = TRUE;
