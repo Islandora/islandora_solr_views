@@ -65,6 +65,15 @@ function islandora_solr_views_views_data() {
       ),
   );
 
+  // include object manage link
+  $data[$base_table]['islandora_manage'] = array(
+    'title' => t('Manage link'),
+    'help' => t('Provide a simple link to manage the content.'),
+    'field' => array(
+      'handler' => 'islandora_solr_views_handler_field_manage',
+    ),
+  );
+  
   // include a lucene query parser filter (q)
   $data[$base_table]['query_lucene'] = array(
     'title' => t('Query Parser (lucene)'),
