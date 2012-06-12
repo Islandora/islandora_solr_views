@@ -102,7 +102,12 @@ function islandora_solr_views_views_data() {
     $field['title'] = $solr_field_name;
     $field['help'] = t('Type') . ': ' .$field_type;
     // field handler
-    $field['field']['handler'] = 'islandora_solr_views_handler_field';
+    if ($field_type == 'date') {
+      $field['field']['handler'] = 'islandora_solr_views_handler_field_date';  
+    }
+    else {
+      $field['field']['handler'] = 'islandora_solr_views_handler_field';
+    }
     // check if sortable
     if (strstr($field_schema, "I") != FALSE AND strstr($field_schema, "M") == FALSE) {
       $field['field']['click sortable'] = TRUE;
