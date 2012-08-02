@@ -93,8 +93,6 @@ class islandora_solr_views_query extends views_plugin_query {
         foreach ($this->params['sort'] as $field => $order) {
           $params['sort'][] = $field . ' ' . $order;
         }
-
-        // sample sort parameters: q=video&sort=inStock asc, price desc
       }
       
       // set query
