@@ -89,8 +89,10 @@ class islandora_solr_views_query extends views_plugin_query {
 
       // Add sorting.
       if (isset($this->params['sort'])) {
-        $params['sort'] = implode(',', $this->params['sort']);
-        // sample sort parameters: q=video&sort=inStock asc, price desc
+        // populate sorting parameters
+        foreach ($this->params['sort'] as $field => $order) {
+          $params['sort'][] = $field . ' ' . $order;
+        }
       }
       
       // set query
@@ -179,7 +181,11 @@ class islandora_solr_views_query extends views_plugin_query {
   }
 
   public function add_sort($field, $order) {
-    $this->params['sort'][] = $field . ' ' . $order;
+    // when sort filters are exposed, two sort calls are made for reasons
+    // unknown, canceling each other out. This way the second call will override
+    // the first, avoiding the issue for now.
+    // @see http://drupal.org/node/1473522
+    $this->params['sort'][$field] = $order;
   }
 
   public function add_parameter($key, $value) {

@@ -16,10 +16,8 @@ Normal Priority
 - field reorder not working?
 
 - field handler: purge/delete object link
-- field handler: edit/manage object link
 
 object: active/inactive delete purge
-
 ds: view download edit delete
 
 
