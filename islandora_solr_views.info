@@ -4,7 +4,6 @@ package = Islandora Search
 core = "7.x"
 php = 5.2
 version = "7.x-1.x-dev"
-project = "islandora_solr_views"
 
 dependencies[] = islandora_solr
 dependencies[] = views
