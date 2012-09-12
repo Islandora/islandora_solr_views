@@ -1,9 +1,10 @@
 <?php
 
 /**
- * @file views handler for solr date field.
- * 
- * Based on core views views_handler_field_date class. 
+ * @file
+ * views handler for solr date field.
+ *
+ * Based on core views views_handler_field_date class.
  */
 
 class islandora_solr_views_handler_field_date extends islandora_solr_views_handler_field {
@@ -21,7 +22,7 @@ class islandora_solr_views_handler_field_date extends islandora_solr_views_handl
 
     return $options;
   }
-  
+
   // options form
   function options_form(&$form, &$form_state) {
 
@@ -57,7 +58,7 @@ class islandora_solr_views_handler_field_date extends islandora_solr_views_handl
     parent::options_form($form, $form_state);
 //    unset($form[]);
   }
-  
+
   // render field
   function render($values) {
     // include rendering style of parent class
@@ -66,7 +67,7 @@ class islandora_solr_views_handler_field_date extends islandora_solr_views_handl
     // set value to timestamp
     // from 2011-12-14T10:51:44.921Z to 1323859904
     $value = strtotime($value);
-    
+
     $format = $this->options['date_format'];
     if (in_array($format, array('custom', 'raw time ago', 'time ago', 'raw time hence', 'time hence', 'raw time span', 'time span', 'raw time span', 'inverse time span', 'time span'))) {
       $custom_format = $this->options['custom_date_format'];
@@ -91,12 +92,12 @@ class islandora_solr_views_handler_field_date extends islandora_solr_views_handl
           return t(($time_diff < 0 ? '%time hence' : '%time ago'), array('%time' => format_interval(abs($time_diff), is_numeric($custom_format) ? $custom_format : 2)));
         case 'custom':
           if ($custom_format == 'r') {
-            return format_date($value, $format, $custom_format, null, 'en');
+            return format_date($value, $format, $custom_format, NULL, 'en');
           }
           return format_date($value, $format, $custom_format);
         default:
           return format_date($value, $format);
-          
+
       }
     }
   }

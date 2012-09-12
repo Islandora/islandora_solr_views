@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Views handler for a lucene query filter
+ */
+
+/**
  * Lucene Query Parser filter field.
  */
 class islandora_solr_views_handler_filter_query_lucene extends islandora_solr_views_handler_filter {
