@@ -1,20 +1,25 @@
 <?php
 
+/**
+ * @file
+ * Views field handler for a manage link
+ */
+
 class islandora_solr_views_handler_field_manage extends islandora_solr_views_handler_field {
-  
+
 
   /**
    * Class init
-   * 
+   *
    * @param type $view
-   * @param type $options 
+   * @param type $options
    */
   function init(&$view, &$options) {
     parent::init($view, $options);
     // add additional field
     $this->additional_fields['PID'] = array('table' => 'islandora_solr', 'field' => 'PID');
   }
-    
+
   /**
    * Define form element for 'link to object' option
    */
@@ -23,7 +28,7 @@ class islandora_solr_views_handler_field_manage extends islandora_solr_views_han
     // don't include link to object options
     unset($form['link_to_object']);
   }
-  
+
   /**
    * Render whatever the data is as a link to the object.
    *
@@ -40,11 +45,11 @@ class islandora_solr_views_handler_field_manage extends islandora_solr_views_han
       $this->options['alter']['query'] = drupal_get_destination();
 
       $text = !empty($this->options['text']) ? $this->options['text'] : t('manage');
-      
+
       return $text;
     }
   }
-  
+
   /**
    *
    * @param type $values

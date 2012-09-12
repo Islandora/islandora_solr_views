@@ -8,7 +8,7 @@ High priority
 
 Normal Priority
 ---------------
-
+- add custom formatters. (formatters should maybe be added in the islandora_solr module, but called in islandora_solr_views as well)
 - add negative operator for filters
 - Query parser filters should also work as an argument
 - expose options how to handle multivalued fields

@@ -1,12 +1,17 @@
 <?php
 
+/**
+ * @file
+ * Views base handler for field
+ */
+
 class islandora_solr_views_handler_field extends views_handler_field {
 
   /**
    * Class init
-   * 
+   *
    * @param type $view
-   * @param type $options 
+   * @param type $options
    */
   function init(&$view, &$options) {
     parent::init($view, $options);
@@ -15,13 +20,13 @@ class islandora_solr_views_handler_field extends views_handler_field {
       $this->additional_fields['PID'] = array('table' => 'islandora_solr', 'field' => 'PID');
     }
   }
-  
+
   /**
    * Get value
-   * 
+   *
    * @param type $values
    * @param type $field
-   * @return type string 
+   * @return type string
    */
   function get_value($values, $field = NULL) {
     $alias = isset($field) ? $this->aliases[$field] : $this->field_alias;
@@ -34,9 +39,9 @@ class islandora_solr_views_handler_field extends views_handler_field {
       }
     }
   }
-  
-  
-  
+
+
+
   /**
    * Define new option
    */
@@ -45,7 +50,7 @@ class islandora_solr_views_handler_field extends views_handler_field {
     $options['link_to_object'] = TRUE;
     return $options;
   }
-  
+
   /**
    * Define form element for 'link to object' option
    */
@@ -78,7 +83,7 @@ class islandora_solr_views_handler_field extends views_handler_field {
     }
     return $data;
   }
-  
+
   /**
    *
    * @param type $values
@@ -88,7 +93,7 @@ class islandora_solr_views_handler_field extends views_handler_field {
     $value = $this->get_value($values);
     return $this->render_link($this->sanitize_value($value), $values);
   }
-  
+
   /**
    * Called to determine what to tell the clicksorter.
    */
@@ -101,4 +106,3 @@ class islandora_solr_views_handler_field extends views_handler_field {
 
 
 
-  
