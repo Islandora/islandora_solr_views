@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Views query functions. Collects query data, prepares it, runs the query and
+ * add results to the view.
+ */
+
 // TODO: Spellchecker field? What todo about spellchecker...
 
 /**
@@ -58,13 +64,13 @@ class islandora_solr_views_query extends views_plugin_query {
 
     try {
       $start = microtime(TRUE);
-      
+
       // include common.inc
       module_load_include('inc', 'islandora_solr', 'includes/common');
 
       // Execute the search.
       $params = array();
-            
+
       $params['rows'] = $this->pager->options['items_per_page'];
       $params['start'] = $this->pager->current_page * $this->pager->options['items_per_page'];
 
@@ -94,7 +100,7 @@ class islandora_solr_views_query extends views_plugin_query {
           $params['sort'][] = $field . ' ' . $order;
         }
       }
-      
+
       // set query
       $dismax = NULL;
       if (isset($this->params['q'])) {
@@ -111,8 +117,8 @@ class islandora_solr_views_query extends views_plugin_query {
       else {
         $query = '*:*';
       }
-      
-      
+
+
       // new query processor class
       $islandoraSolrQuery = new IslandoraSolrQueryProcessor();
 
@@ -133,17 +139,17 @@ class islandora_solr_views_query extends views_plugin_query {
 
       // excecute query
       $islandoraSolrQuery->executeQuery();
-      
+
       // solr results
       $results = $islandoraSolrQuery->solrResult;
       $raw_response = $results->getRawResponse();
       $response_array = json_decode($raw_response, TRUE);
-      
+
       // populate views results
       foreach ($response_array['response']['docs'] as $result_item) {
         $view->result[] = (object) $result_item;
       }
-      
+
       // Store response
       $this->islandora_solr_response = $response_array;
 
@@ -162,7 +168,7 @@ class islandora_solr_views_query extends views_plugin_query {
 
     if ($this->errors) {
       foreach ($this->errors as $msg) {
-        drupal_set_message($msg, 'error');
+        drupal_set_message(filter_xss($msg), 'error');
       }
       $view->result = array();
       $view->total_rows = 0;
@@ -198,14 +204,14 @@ class islandora_solr_views_query extends views_plugin_query {
     }
   }
 
-  public function ensure_table($table, $relationship) {   
+  public function ensure_table($table, $relationship) {
     if ($table == 'islandora_solr') {
       return drupal_map_assoc(array('PID'));
-    }    
+    }
   }
 
   public function get_params() {
     return $this->params;
   }
-  
+
 }
