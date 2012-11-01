@@ -29,7 +29,10 @@ class islandora_solr_views_handler_field_date extends islandora_solr_views_handl
     $date_formats = array();
     $date_types = system_get_date_types();
     foreach ($date_types as $key => $value) {
-      $date_formats[$value['type']] = check_plain(t($value['title'] . ' format')) . ': ' . format_date(REQUEST_TIME, $value['type']);
+      $date_formats[$value['type']] = t('@title format: @date', array(
+        '@title' => $value['title'],
+        '@date' => format_date(REQUEST_TIME, $value['type']),
+      ));
     }
 
     $form['date_format'] = array(
@@ -89,7 +92,17 @@ class islandora_solr_views_handler_field_date extends islandora_solr_views_handl
         case 'inverse time span':
           return ($time_diff > 0 ? '-' : '') . format_interval(abs($time_diff), is_numeric($custom_format) ? $custom_format : 2);
         case 'time span':
-          return t(($time_diff < 0 ? '%time hence' : '%time ago'), array('%time' => format_interval(abs($time_diff), is_numeric($custom_format) ? $custom_format : 2)));
+          $substitutions = array(
+            '%time' => format_interval(abs($time_diff), is_numeric($custom_format)?
+              $custom_format:
+              2),
+          );
+          if ($time_diff < 0) {
+            return t('%time hence', $substitutions);
+          }
+          else {
+            return t('%time ago', $substitutions);
+          }
         case 'custom':
           if ($custom_format == 'r') {
             return format_date($value, $format, $custom_format, NULL, 'en');
