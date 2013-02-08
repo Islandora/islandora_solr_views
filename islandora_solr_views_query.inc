@@ -138,20 +138,19 @@ class islandora_solr_views_query extends views_plugin_query {
       $islandoraSolrQuery->solrParams = $params;
 
       // excecute query
-      $islandoraSolrQuery->executeQuery();
+      $islandoraSolrQuery->executeQuery(FALSE);
 
       // solr results
-      $results = $islandoraSolrQuery->solrResult;
-      $raw_response = $results->getRawResponse();
-      $response_array = json_decode($raw_response, TRUE);
+      $results = $islandoraSolrQuery->islandoraSolrResult;
+      $object_results = $results['response']['objects'];
 
       // populate views results
-      foreach ($response_array['response']['docs'] as $result_item) {
-        $view->result[] = (object) $result_item;
+      foreach ($object_results as $object_result) {
+        $view->result[] = (object) $object_result['solr_doc'];
       }
 
       // Store response
-      $this->islandora_solr_response = $response_array;
+      $this->islandora_solr_response = $results;
 
       // Store the results.
       $this->pager->total_items = $view->total_rows = $this->islandora_solr_response['response']['numFound']; // no object, but array
