@@ -2,12 +2,11 @@
 
 /**
  * @file
- * Provides Views Implementation for the ApacheSolr Search Integration project
- * drupal.org/project/apachesolr
+ * Provides Views Implementation for Islandora Solr
  */
 
 /**
- * Implementation of hook_views_api().
+ * Implements hook_views_api().
  */
 function islandora_solr_views_views_api() {
   return array('api' => '3.0');

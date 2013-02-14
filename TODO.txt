@@ -8,21 +8,26 @@ High priority
 
 Normal Priority
 ---------------
-
+- add custom formatters. (formatters should maybe be added in the islandora_solr module, but called in islandora_solr_views as well)
 - add negative operator for filters
-- Query parser filter should also work as an argument
-- Query parser filter should work with dismax (checkbox?)
+- Query parser filters should also work as an argument
 - expose options how to handle multivalued fields
 - Pull in human readable names (and help texts?) for islandora solr views handlers
-- field reorder not working??
+- field reorder not working?
+
+- field handler: purge/delete object link
+
+object: active/inactive delete purge
+ds: view download edit delete
+
 
 Low Priority
 ------------
 
-
-
-
 - Link field to object only apply on non-multivalue fields
+- create views display for using views in our normal search results at islandora/search.
+- field handler: url alias (when url alias support will be added to islandora)
+
 
 
 Sorting:
@@ -31,7 +36,6 @@ indexed="true"
 non-tokenized (no analyzer or single term analyser (KeywordTokenizer))
 
 M == false, I == true, T == false
-
 
 @TODO: Finetune/debug all handlers.
 -> solr field types:
@@ -43,17 +47,14 @@ date
 alphaOnlySort
 ignored
 
-@TODO: adding functionality should always extend the islandora solr base handlers, not the extended views core handlers
 
-@TODO: fix results rendering. empty results, arrays, etc..
+Note: adding functionality should always extend the islandora solr base handlers, not the extended views core handlers
+
+
 @TODO: automatically replaced the dots in default values of exposed filter parameters. Maybe that should be added on form validate too.
 @TODO: (exposed) filters only work with AND statements, not with OR.
-@TODO: Relevancy score handler always return 1 because there is no query given. 
 @TODO: fix odd space issue when filtering value with a space (both _s and _it)
-@TODO: currently the views queries are set to *:* and non-dismax for clean, targeted searches.
-       Alternatively if we could use views results in our normal searches. We could
-       use a query, dismax and call IslandoraSolrQueryProcessor::buildAndExecuteQuery() so facet blocks are created.
-       
+
 @TODO: add field handler for date formatting. (with date module api?)
 @TODO: field with simple link to object. Form: 'text to display'
 @TODO: formatter options on strings and text field handlers: default/drupalformatters/plaintext/trimmed?
@@ -73,17 +74,6 @@ XML metadata datastream => as formatted table. DS = DC, MODS, FGS or user input.
 
 For all media types, Shadowbox support?
 Need encoded titles for media objects.
-
-
-
-
-To do after islandora api rewrite:
-@TODO: field handler: purge/delete object link
-@TODO: field handler: edit object link
-@TODO: field handler: url alias (when url alias support will be added to islandora)
-
-
-@TODO: contextual filter: would single dismax query be possible or appropriate?
 
 @TODO: how are fedora object access settings set? As a field or when rendering the results?
 
