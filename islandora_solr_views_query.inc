@@ -61,7 +61,6 @@ class islandora_solr_views_query extends views_plugin_query {
    * $view->pager['current_page'].
    */
   public function execute(&$view) {
-
     try {
       $start = microtime(TRUE);
 
@@ -131,7 +130,7 @@ class islandora_solr_views_query extends views_plugin_query {
       // add solr limit
       $islandoraSolrQuery->solrLimit = $this->pager->options['items_per_page'];
       // add solr start
-      $islandoraSolrQuery->solrStart = max(0, $this->pager->current_page) * $islandoraSolrQuery->solrLimit;
+      $islandoraSolrQuery->solrStart = $this->offset;
       // add query (defaults to *:*)
       $islandoraSolrQuery->solrQuery = restore_slashes($query);
       // add solr parameters
