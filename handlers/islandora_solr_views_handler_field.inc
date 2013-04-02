@@ -57,7 +57,7 @@ class islandora_solr_views_handler_field extends views_handler_field {
   function options_form(&$form, &$form_state) {
     $form['link_to_object'] = array(
       '#title' => t('Link field to object.'),
-      '#description' => t("Enable to override this field's links."),
+      '#description' => t("Enabling this will !override the field's existing links, if any."),
       '#type' => 'checkbox',
       '#default_value' => !empty($this->options['link_to_object']),
     );
