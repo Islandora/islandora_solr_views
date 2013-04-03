@@ -15,7 +15,7 @@ function islandora_solr_views_views_plugins() {
     'query' => array(
       'islandora_solr_views_query' => array(
         'title' => t('Islandora Solr Query'),
-        'help' => t('Query that allows you to search with Islandora Solr.'),
+        'help' => t('Query that allows you to search Islandora Solr.'),
         'handler' => 'islandora_solr_views_query',
         'parent' => 'views_query',
       ),
@@ -77,8 +77,8 @@ function islandora_solr_views_views_data() {
 
   // include a lucene query parser filter (q)
   $data[$base_table]['query_lucene'] = array(
-    'title' => t('Query Parser (lucene)'),
-    'help' => t('Query Parser field to perform lucene keyword searches.'),
+    'title' => t('Query Parser (Lucene)'),
+    'help' => t('Query Parser field to perform Lucene keyword searches.'),
     'filter' => array(
       'handler' => 'islandora_solr_views_handler_filter_query_lucene',
     ),
@@ -86,8 +86,8 @@ function islandora_solr_views_views_data() {
 
   // include a dismax query parser filter (q)
   $data[$base_table]['query_dismax'] = array(
-    'title' => t('Query Parser (dismax)'),
-    'help' => t('Query Parser field to perform dismax keyword searches.'),
+    'title' => t('Query Parser (DisMax)'),
+    'help' => t('Query Parser field to perform DisMax keyword searches.'),
     'filter' => array(
       'handler' => 'islandora_solr_views_handler_filter_query_dismax',
     ),
