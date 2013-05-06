@@ -10,12 +10,12 @@ env:
 before_install:
   - cd $HOME
   - git clone -b 7.x git://github.com/Islandora/islandora.git
-  - git clone -b 7.x git://github.com/Islandora/islandora_solr.git
+  - git clone -b 7.x git://github.com/Islandora/islandora_solr_search.git
   - export ISLANDORA_DIR=$HOME/islandora
   - $HOME/islandora/tests/scripts/travis_setup.sh
   - cd $HOME/drupal-*
   - ln -s $TRAVIS_BUILD_DIR sites/all/modules/islandora_solr_views
-  - ln -s $HOME/islandora_solr sites/all/modules/islandora_solr
+  - ln -s $HOME/islandora_solr_search sites/all/modules/islandora_solr_search
   - drush en --yes islandora_solr_views
 script:
   - ant -buildfile sites/all/modules/islandora_solr_views/build.xml lint
