@@ -15,7 +15,7 @@
 class islandora_solr_views_query extends views_plugin_query {
 
   /**
-   * Array of parameters for Solr query.
+   * array of parameters for Solr query
    */
   protected $params = array();
 
