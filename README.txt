@@ -9,7 +9,7 @@ Usage
 -----
 Use with:
 - views 3
-- islandora_solr D7: https://github.com/Islandora/islandora_solr/tree/7.x
+- islandora_solr_search D7: https://github.com/Islandora/islandora_solr_search/tree/7.x
 
 
 Inspired by

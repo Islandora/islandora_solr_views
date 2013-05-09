@@ -5,12 +5,14 @@
  * Views base handler for arguments
  */
 
-// include common.inc for lesser_escape())
-// @TODO: call this somewhere else?
+// Include common.inc for lesser_escape()).
+// @TODO: Call this somewhere else?
 module_load_include('inc', 'islandora_solr', 'includes/common');
 
 class islandora_solr_views_handler_argument extends views_handler_argument {
-
+  /**
+   *
+   */
   function query() {
 
     if (!empty($this->argument)) {
@@ -31,5 +33,4 @@ class islandora_solr_views_handler_argument extends views_handler_argument {
       $this->query->add_filter($fieldname, $value);
     }
   }
-
 }
