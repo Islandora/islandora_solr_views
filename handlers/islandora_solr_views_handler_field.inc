@@ -5,6 +5,10 @@
  * Views base handler for field.
  */
 
+// @codingStandardsIgnoreStart
+// This Whole file is ignored due to classes and methods are not camelcase and it
+// being called all over the place. TODO bring up to coding standards
+
 class islandora_solr_views_handler_field extends views_handler_field {
 
   /**
@@ -103,3 +107,4 @@ class islandora_solr_views_handler_field extends views_handler_field {
   }
 
 }
+// @codingStandardsIgnoreEnd

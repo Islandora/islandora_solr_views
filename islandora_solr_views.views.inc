@@ -28,7 +28,7 @@ function islandora_solr_views_views_plugins() {
  * Implements hook_views_data().
  */
 function islandora_solr_views_views_data() {
-  // set base variables
+  // Set base variables.
   $base_field = 'PID';
   $base_table = 'islandora_solr';
   $data[$base_table]['table']['group'] = t('Islandora Solr');
@@ -40,28 +40,27 @@ function islandora_solr_views_views_data() {
     'field' => $base_field,
   );
 
-
   // Get the list of the fields in index directly from Solr.
   $luke = islandora_solr_get_luke();
   $solr_fields = $luke['fields'];
 
   // Always add score handlers.
   $data[$base_table]['score'] = array(
-      'title' => t('Score'),
-      'help' => t('Relevancy score'),
-      'field' => array(
-        'handler' => 'islandora_solr_views_handler_field',
-        'click sortable' => TRUE,
-      ),
-      'argument' => array(
-        'handler' => 'islandora_solr_views_handler_argument',
-      ),
-      'filter' => array(
-        'handler' => 'islandora_solr_views_handler_filter',
-      ),
-      'sort' => array(
-        'handler' => 'islandora_solr_views_handler_sort',
-      ),
+    'title' => t('Score'),
+    'help' => t('Relevancy score'),
+    'field' => array(
+      'handler' => 'islandora_solr_views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'argument' => array(
+      'handler' => 'islandora_solr_views_handler_argument',
+    ),
+    'filter' => array(
+      'handler' => 'islandora_solr_views_handler_filter',
+    ),
+    'sort' => array(
+      'handler' => 'islandora_solr_views_handler_sort',
+    ),
   );
 
   // Include object manage link.
@@ -73,7 +72,7 @@ function islandora_solr_views_views_data() {
     ),
   );
 
-  // Include a lucene query parser filter (q)
+  // Include a lucene query parser filter (q).
   $data[$base_table]['query_lucene'] = array(
     'title' => t('Query Parser (Lucene)'),
     'help' => t('Query Parser field to perform Lucene keyword searches.'),
@@ -91,7 +90,7 @@ function islandora_solr_views_views_data() {
     ),
   );
 
-  // loop over all solr fields
+  // Loop over all solr fields.
   foreach ($solr_fields as $solr_field_name => $solr_field) {
 
     // We do not allow to display 'sort_*' fields.

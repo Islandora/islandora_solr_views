@@ -9,9 +9,12 @@
 // @TODO: Call this somewhere else?
 module_load_include('inc', 'islandora_solr', 'includes/common');
 
+// @codingStandardsIgnoreStart
+// This Whole file is ignored due to classes and methods are not camelcase and it
+// being called all over the place. TODO bring up to coding standards
 class islandora_solr_views_handler_argument extends views_handler_argument {
   /**
-   *
+   * Function query.
    */
   function query() {
 
@@ -34,3 +37,4 @@ class islandora_solr_views_handler_argument extends views_handler_argument {
     }
   }
 }
+// @codingStandardsIgnoreEnd

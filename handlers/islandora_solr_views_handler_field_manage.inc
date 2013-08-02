@@ -5,6 +5,9 @@
  * Views field handler for a manage link.
  */
 
+// @codingStandardsIgnoreStart
+// This Whole file is ignored due to classes and methods are not camelcase and it
+// being called all over the place. TODO bring up to coding standards
 class islandora_solr_views_handler_field_manage extends islandora_solr_views_handler_field {
 
 
@@ -59,3 +62,4 @@ class islandora_solr_views_handler_field_manage extends islandora_solr_views_han
     return $this->render_link($this->sanitize_value($value), $values);
   }
 }
+// @codingStandardsIgnoreEnd

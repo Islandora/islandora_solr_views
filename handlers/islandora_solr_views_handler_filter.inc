@@ -5,6 +5,10 @@
  * Views filter handler base.
  */
 
+// @codingStandardsIgnoreStart
+// This Whole file is ignored due to classes and methods are not camelcase and it
+// being called all over the place. TODO bring up to coding standards
+// 
 // Include common.inc for lesser_escape()).
 // @TODO: Call this somewhere else?
 module_load_include('inc', 'islandora_solr', 'includes/common');
@@ -48,3 +52,4 @@ class islandora_solr_views_handler_filter extends views_handler_filter {
     $this->options['expose']['identifier'] = drupal_strtolower(preg_replace('/[^A-Za-z0-9]/', '_', $this->options['id']));
   }
 }
+// @codingStandardsIgnoreEnd

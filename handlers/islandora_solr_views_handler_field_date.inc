@@ -7,6 +7,9 @@
  * Based on core views views_handler_field_date class.
  */
 
+// @codingStandardsIgnoreStart
+// This Whole file is ignored due to classes and methods are not camelcase and it
+// being called all over the place. TODO bring up to coding standards
 class islandora_solr_views_handler_field_date extends islandora_solr_views_handler_field {
 
   /**
@@ -16,14 +19,16 @@ class islandora_solr_views_handler_field_date extends islandora_solr_views_handl
     // Get parent options.
     $options = parent::option_definition();
 
-    // set defaults
+    // Set defaults.
     $options['date_format'] = array('default' => 'small');
     $options['custom_date_format'] = array('default' => '');
 
     return $options;
   }
 
-  // Options form.
+  /**
+   * Options form.
+   */
   function options_form(&$form, &$form_state) {
 
     $date_formats = array();
@@ -55,7 +60,18 @@ class islandora_solr_views_handler_field_date extends islandora_solr_views_handl
       '#title' => t('Custom date format'),
       '#description' => t('If "Custom" is selected, see <a href="http://us.php.net/manual/en/function.date.php" target="_blank">the PHP docs</a> for date formats. Otherwise, enter the number of different time units to display, which defaults to 2.'),
       '#default_value' => isset($this->options['custom_date_format']) ? $this->options['custom_date_format'] : '',
-      '#dependency' => array('edit-options-date-format' => array('custom', 'raw time ago', 'time ago', 'raw time hence', 'time hence', 'raw time span', 'time span', 'raw time span', 'inverse time span', 'time span')),
+      '#dependency' => array(
+        'edit-options-date-format' => array(
+          'custom',
+          'raw time ago',
+          'time ago',
+          'raw time hence',
+          'time hence',
+          'raw time span',
+          'time span',
+          'raw time span',
+          'inverse time span',
+          'time span')),
     );
 
     parent::options_form($form, $form_state);
@@ -72,12 +88,23 @@ class islandora_solr_views_handler_field_date extends islandora_solr_views_handl
     $value = strtotime($value);
 
     $format = $this->options['date_format'];
-    if (in_array($format, array('custom', 'raw time ago', 'time ago', 'raw time hence', 'time hence', 'raw time span', 'time span', 'raw time span', 'inverse time span', 'time span'))) {
+    if (in_array($format, array(
+      'custom',
+      'raw time ago',
+      'time ago',
+      'raw time hence',
+      'time hence',
+      'raw time span',
+      'time span',
+      'raw time span',
+      'inverse time span',
+      'time span'))) {
       $custom_format = $this->options['custom_date_format'];
     }
 
     if ($value) {
-      // Will be positive for a datetime in the past (ago), and negative for a datetime in the future (hence).
+      // Will be positive for a datetime in the past (ago), and negative
+      // for a datetime in the future (hence).
       $time_diff = REQUEST_TIME - $value;
       switch ($format) {
         case 'raw time ago':
@@ -100,7 +127,7 @@ class islandora_solr_views_handler_field_date extends islandora_solr_views_handl
 
         case 'time span':
           $substitutions = array(
-            '%time' => format_interval(abs($time_diff), is_numeric($custom_format)?
+            '%time' => format_interval(abs($time_diff), is_numeric($custom_format) ?
               $custom_format :
               2),
           );
@@ -124,3 +151,4 @@ class islandora_solr_views_handler_field_date extends islandora_solr_views_handl
     }
   }
 }
+// @codingStandardsIgnoreEnd
