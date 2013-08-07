@@ -2,11 +2,15 @@
 
 /**
  * @file
- * Views filter handler base
+ * Views filter handler base.
  */
 
-// include common.inc for lesser_escape())
-// @TODO: call this somewhere else?
+// @codingStandardsIgnoreStart
+// This Whole file is ignored due to classes and methods are not camelcase and it
+// being called all over the place. TODO bring up to coding standards
+// 
+// Include common.inc for lesser_escape()).
+// @TODO: Call this somewhere else?
 module_load_include('inc', 'islandora_solr', 'includes/common');
 
 class islandora_solr_views_handler_filter extends views_handler_filter {
@@ -31,7 +35,7 @@ class islandora_solr_views_handler_filter extends views_handler_filter {
   }
 
   /**
-   * Provide a simple textfield for equality
+   * Provide a simple textfield for equality.
    */
   function value_form(&$form, &$form_state) {
     $form['value'] = array(
@@ -45,7 +49,7 @@ class islandora_solr_views_handler_filter extends views_handler_filter {
    * Provide default options for exposed filters.
    */
   function expose_options() {
-    $this->options['expose']['identifier'] = drupal_strtolower( preg_replace('/[^A-Za-z0-9]/', '_', $this->options['id']) );
+    $this->options['expose']['identifier'] = drupal_strtolower(preg_replace('/[^A-Za-z0-9]/', '_', $this->options['id']));
   }
-
 }
+// @codingStandardsIgnoreEnd
