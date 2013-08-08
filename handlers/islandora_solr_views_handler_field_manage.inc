@@ -2,14 +2,17 @@
 
 /**
  * @file
- * Views field handler for a manage link
+ * Views field handler for a manage link.
  */
 
+// @codingStandardsIgnoreStart
+// This Whole file is ignored due to classes and methods are not camelcase and it
+// being called all over the place. TODO bring up to coding standards
 class islandora_solr_views_handler_field_manage extends islandora_solr_views_handler_field {
 
 
   /**
-   * Class init
+   * Class init.
    *
    * @param type $view
    * @param type $options
@@ -21,7 +24,7 @@ class islandora_solr_views_handler_field_manage extends islandora_solr_views_han
   }
 
   /**
-   * Define form element for 'link to object' option
+   * Define form element for 'link to object' option.
    */
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
@@ -38,8 +41,6 @@ class islandora_solr_views_handler_field_manage extends islandora_solr_views_han
 
     if (!empty($this->additional_fields['PID'])) {
       // Ensure user has access to edit this node.
-
-
       $this->options['alter']['make_link'] = TRUE;
       $this->options['alter']['path'] = 'islandora/object/' . $this->get_value($values, 'PID') . '/manage';
       $this->options['alter']['query'] = drupal_get_destination();
@@ -53,6 +54,7 @@ class islandora_solr_views_handler_field_manage extends islandora_solr_views_han
   /**
    *
    * @param type $values
+   *
    * @return type string Rendered value
    */
   function render($values) {
@@ -60,6 +62,4 @@ class islandora_solr_views_handler_field_manage extends islandora_solr_views_han
     return $this->render_link($this->sanitize_value($value), $values);
   }
 }
-
-
-
+// @codingStandardsIgnoreEnd

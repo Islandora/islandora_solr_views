@@ -2,30 +2,35 @@
 
 /**
  * @file
- * Views base handler for field
+ * Views base handler for field.
  */
+
+// @codingStandardsIgnoreStart
+// This Whole file is ignored due to classes and methods are not camelcase and it
+// being called all over the place. TODO bring up to coding standards
 
 class islandora_solr_views_handler_field extends views_handler_field {
 
   /**
-   * Class init
+   * Class init.
    *
    * @param type $view
    * @param type $options
    */
   function init(&$view, &$options) {
     parent::init($view, $options);
-    // Don't add the additional fields to groupby
+    // Don't add the additional fields to groupby.
     if (!empty($this->options['link_to_object'])) {
       $this->additional_fields['PID'] = array('table' => 'islandora_solr', 'field' => 'PID');
     }
   }
 
   /**
-   * Get value
+   * Get value.
    *
    * @param type $values
    * @param type $field
+   *
    * @return type string
    */
   function get_value($values, $field = NULL) {
@@ -40,10 +45,8 @@ class islandora_solr_views_handler_field extends views_handler_field {
     }
   }
 
-
-
   /**
-   * Define new option
+   * Define new option.
    */
   function option_definition() {
     $options = parent::option_definition();
@@ -52,7 +55,7 @@ class islandora_solr_views_handler_field extends views_handler_field {
   }
 
   /**
-   * Define form element for 'link to object' option
+   * Define form element for 'link to object' option.
    */
   function options_form(&$form, &$form_state) {
     $form['link_to_object'] = array(
@@ -87,6 +90,7 @@ class islandora_solr_views_handler_field extends views_handler_field {
   /**
    *
    * @param type $values
+   *
    * @return type string Rendered value
    */
   function render($values) {
@@ -103,5 +107,4 @@ class islandora_solr_views_handler_field extends views_handler_field {
   }
 
 }
-
-
+// @codingStandardsIgnoreEnd
