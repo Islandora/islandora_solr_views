@@ -5,7 +5,7 @@
  * Views base handler for collection counting.
  */
 
-class islandora_solr_views_handler_collection_count extends views_handler_field {
+class IslandoraSolrViewsHandlerCollectionCount extends views_handler_field {
   /**
    * Inherits.
    *
@@ -15,7 +15,7 @@ class islandora_solr_views_handler_collection_count extends views_handler_field 
    * @return string
    *   The rendered markup string.
    */
-  function render($values) {
+  public function render($values) {
     $pid = $values->PID;
     $object = islandora_object_load($pid);
 

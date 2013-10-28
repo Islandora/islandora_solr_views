@@ -141,7 +141,7 @@ function islandora_solr_views_views_data() {
     'title' => 'Collection count',
     'help' => t('This shows the number of immediate child objects in the collection.'),
     'field' => array(
-      'handler' => 'islandora_solr_views_handler_collection_count',
+      'handler' => 'IslandoraSolrViewsHandlerCollectionCount',
     ),
   );
   return $data;
