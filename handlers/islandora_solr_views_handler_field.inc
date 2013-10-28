@@ -37,6 +37,7 @@ class islandora_solr_views_handler_field extends views_handler_field {
     $alias = isset($field) ? $this->aliases[$field] : $this->field_alias;
     if (isset($values->{$alias})) {
       if (is_array($values->{$alias})) {
+        $values->{$alias} = array_filter($values->{$alias}, 'trim');
         return implode(", ", $values->{$alias});
       }
       else {
