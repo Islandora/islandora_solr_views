@@ -136,6 +136,13 @@ function islandora_solr_views_views_data() {
     // Add array.
     $data[$base_table][$solr_field_name] = $field;
   }
-
+  // Add our collection counting goodness.
+  $data[$base_table]['solr_collection_count'] = array(
+    'title' => 'Collection count',
+    'help' => t('This shows the number of immediate child objects in the collection.'),
+    'field' => array(
+      'handler' => 'IslandoraSolrViewsHandlerCollectionCount',
+    ),
+  );
   return $data;
 }
