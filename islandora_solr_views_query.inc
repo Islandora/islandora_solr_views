@@ -140,7 +140,7 @@ class islandora_solr_views_query extends views_plugin_query {
       // Add solr start.
       $islandora_solr_query->solrStart = $this->offset;
       // Add query (defaults to *:*).
-      $islandora_solr_query->solrQuery = restore_slashes($query);
+      $islandora_solr_query->solrQuery = islandora_solr_restore_slashes($query);
       // Add solr parameters.
       $islandora_solr_query->solrParams = $params;
 
