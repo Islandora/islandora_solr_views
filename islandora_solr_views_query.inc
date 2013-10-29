@@ -6,8 +6,11 @@
  * add results to the view.
  */
 
-// TODO: Spellchecker field? What todo about spellchecker...
+// @codingStandardsIgnoreStart
+// This Whole file is ignored due to classes and methods are not camelcase and it
+// being called all over the place. TODO bring up to coding standards
 
+// TODO: Spellchecker field? What todo about spellchecker...
 /**
  * Class for handling a view that gets its data not from the database, but from
  * a Solr server.
@@ -15,7 +18,7 @@
 class islandora_solr_views_query extends views_plugin_query {
 
   /**
-   * Array of parameters for Solr query.
+   * array of parameters for Solr query
    */
   protected $params = array();
 
@@ -37,6 +40,9 @@ class islandora_solr_views_query extends views_plugin_query {
 
   protected $islandora_solr_results;
 
+  /**
+   * Function build.
+   */
   public function build(&$view) {
     $view->init_pager();
 
@@ -54,6 +60,8 @@ class islandora_solr_views_query extends views_plugin_query {
   }
 
   /**
+   * Function execute.
+   * 
    * Executes the query and fills the associated view object with according
    * values.
    *
@@ -64,7 +72,7 @@ class islandora_solr_views_query extends views_plugin_query {
     try {
       $start = microtime(TRUE);
 
-      // include common.inc
+      // Include common.inc.
       module_load_include('inc', 'islandora_solr', 'includes/common');
 
       // Execute the search.
@@ -80,7 +88,7 @@ class islandora_solr_views_query extends views_plugin_query {
 
       // Add fields.
       if (isset($this->params['fl'])) {
-        // always return PID
+        // Always return PID.
         if (!in_array('PID', $this->params['fl'])) {
           $this->params['fl'][] = 'PID';
         }
@@ -94,22 +102,23 @@ class islandora_solr_views_query extends views_plugin_query {
 
       // Add sorting.
       if (isset($this->params['sort'])) {
-        // populate sorting parameters
+        // Populate sorting parameters.
         foreach ($this->params['sort'] as $field => $order) {
           $params['sort'][] = $field . ' ' . $order;
         }
       }
 
-      // set query
+      // Set query.
       $dismax = NULL;
       if (isset($this->params['q'])) {
-        // query
+        // Query.
         $query = $this->params['q'];
 
-        // dismax
+        // Dismax.
         if (isset($this->params['defType']) AND $this->params['defType'] == 'dismax') {
           $dismax = $this->params['defType'];
-          // if no qf fields are specified in the requestHandler a default list is supplied here for dismax searches
+          // If no qf fields are specified in the requestHandler a default
+          // list is supplied here for dismax searches.
           $params['qf'] = 'dc.title^5 dc.subject^2 dc.description^2 dc.creator^2 dc.contributor^1 dc.type';
         }
       }
@@ -117,44 +126,44 @@ class islandora_solr_views_query extends views_plugin_query {
         $query = '*:*';
       }
 
+      // New query processor class.
+      $islandora_solr_query = new IslandoraSolrQueryProcessor();
 
-      // new query processor class
-      $islandoraSolrQuery = new IslandoraSolrQueryProcessor();
-
-      // check for dismax (not functional yet)
+      // Check for dismax (not functional yet).
       if ($dismax != NULL) {
-        $islandoraSolrQuery->solrDefType = $dismax;
+        $islandora_solr_query->solrDefType = $dismax;
         $params['defType'] = $dismax;
       }
 
-      // add solr limit
-      $islandoraSolrQuery->solrLimit = $this->pager->options['items_per_page'];
-      // add solr start
-      $islandoraSolrQuery->solrStart = $this->offset;
-      // add query (defaults to *:*)
-      $islandoraSolrQuery->solrQuery = islandora_solr_restore_slashes($query);
-      // add solr parameters
-      $islandoraSolrQuery->solrParams = $params;
+      // Add solr limit.
+      $islandora_solr_query->solrLimit = $this->pager->options['items_per_page'];
+      // Add solr start.
+      $islandora_solr_query->solrStart = $this->offset;
+      // Add query (defaults to *:*).
+      $islandora_solr_query->solrQuery = islandora_solr_restore_slashes($query);
+      // Add solr parameters.
+      $islandora_solr_query->solrParams = $params;
 
-      // excecute query
-      $islandoraSolrQuery->executeQuery(FALSE);
+      // Excecute query.
+      $islandora_solr_query->executeQuery(FALSE);
 
-      // solr results
-      $results = $islandoraSolrQuery->islandoraSolrResult;
+      // Solr results.
+      $results = $islandora_solr_query->islandoraSolrResult;
       $object_results = $results['response']['objects'];
 
-      // populate views results
+      // Populate views results.
       foreach ($object_results as $object_result) {
         $view->result[] = (object) $object_result['solr_doc'];
       }
 
-      // Store response
+      // Store response.
       $this->islandora_solr_response = $results;
 
       // Store the results.
-      $this->pager->total_items = $view->total_rows = $this->islandora_solr_response['response']['numFound']; // no object, but array
+      // No object, but Array.
+      $view->total_rows = $this->islandora_solr_response['response']['numFound'];
+      $this->pager->total_items = $this->islandora_solr_response['response']['numFound'];
       $this->pager->update_page_info();
-
 
       // We shouldn't use $results['performance']['complete'] here, since
       // extracting the results probably takes considerable time as well.
@@ -175,41 +184,63 @@ class islandora_solr_views_query extends views_plugin_query {
     }
   }
 
+  /**
+   * Function add_filter.
+   */
   public function add_filter($type, $value, $exclude = FALSE) {
     $exclude_string = ($exclude) ? '-' : '';
     $this->params['filters'][] = $exclude_string . $type . ':' . $value;
   }
 
+  /**
+   * Function add_filter_string.
+   */
   public function add_filter_string($string) {
     $this->params['q.alt'][] = $string;
   }
 
+  /**
+   * Function add_sort.
+   */
   public function add_sort($field, $order) {
-    // when sort filters are exposed, two sort calls are made for reasons
+    // When sort filters are exposed, two sort calls are made for reasons
     // unknown, canceling each other out. This way the second call will override
     // the first, avoiding the issue for now.
     // @see http://drupal.org/node/1473522
     $this->params['sort'][$field] = $order;
   }
 
+  /**
+   * Function add_parameter.
+   */
   public function add_parameter($key, $value) {
     $this->params[$key] = $value;
   }
 
+  /**
+   * Function add_field.
+   */
   public function add_field($table_alias, $field, $alias = '', $params = array()) {
     if (isset($table_alias[$field])) {
       return $table_alias[$field];
     }
   }
 
+  /**
+   * Function ensure_table.
+   */
   public function ensure_table($table, $relationship) {
     if ($table == 'islandora_solr') {
       return drupal_map_assoc(array('PID'));
     }
   }
 
+  /**
+   * Function get_params.
+   */
   public function get_params() {
     return $this->params;
   }
 
 }
+// @codingStandardsIgnoreEnd

@@ -24,13 +24,11 @@ function islandora_solr_views_views_plugins() {
 
 }
 
-
-
 /**
  * Implements hook_views_data().
  */
 function islandora_solr_views_views_data() {
-  // set base variables
+  // Set base variables.
   $base_field = 'PID';
   $base_table = 'islandora_solr';
   $data[$base_table]['table']['group'] = t('Islandora Solr');
@@ -42,31 +40,30 @@ function islandora_solr_views_views_data() {
     'field' => $base_field,
   );
 
-
   // Get the list of the fields in index directly from Solr.
   $luke = islandora_solr_get_luke();
   $solr_fields = $luke['fields'];
 
-  // always add score handlers
+  // Always add score handlers.
   $data[$base_table]['score'] = array(
-      'title' => t('Score'),
-      'help' => t('Relevancy score'),
-      'field' => array(
-        'handler' => 'islandora_solr_views_handler_field',
-        'click sortable' => TRUE,
-      ),
-      'argument' => array(
-        'handler' => 'islandora_solr_views_handler_argument',
-      ),
-      'filter' => array(
-        'handler' => 'islandora_solr_views_handler_filter',
-      ),
-      'sort' => array(
-        'handler' => 'islandora_solr_views_handler_sort',
-      ),
+    'title' => t('Score'),
+    'help' => t('Relevancy score'),
+    'field' => array(
+      'handler' => 'islandora_solr_views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'argument' => array(
+      'handler' => 'islandora_solr_views_handler_argument',
+    ),
+    'filter' => array(
+      'handler' => 'islandora_solr_views_handler_filter',
+    ),
+    'sort' => array(
+      'handler' => 'islandora_solr_views_handler_sort',
+    ),
   );
 
-  // include object manage link
+  // Include object manage link.
   $data[$base_table]['islandora_manage'] = array(
     'title' => t('Manage link'),
     'help' => t('Provide a simple link to manage the content.'),
@@ -75,7 +72,7 @@ function islandora_solr_views_views_data() {
     ),
   );
 
-  // include a lucene query parser filter (q)
+  // Include a lucene query parser filter (q).
   $data[$base_table]['query_lucene'] = array(
     'title' => t('Query Parser (Lucene)'),
     'help' => t('Query Parser field to perform Lucene keyword searches.'),
@@ -84,7 +81,7 @@ function islandora_solr_views_views_data() {
     ),
   );
 
-  // include a dismax query parser filter (q)
+  // Include a dismax query parser filter (q).
   $data[$base_table]['query_dismax'] = array(
     'title' => t('Query Parser (DisMax)'),
     'help' => t('Query Parser field to perform DisMax keyword searches.'),
@@ -93,57 +90,59 @@ function islandora_solr_views_views_data() {
     ),
   );
 
-
-
-  // loop over all solr fields
+  // Loop over all solr fields.
   foreach ($solr_fields as $solr_field_name => $solr_field) {
 
     // We do not allow to display 'sort_*' fields.
     if (strpos($solr_field_name, 'sort_') === 0) {
       continue;
     }
-    // set luke field variables
+    // Set luke field variables.
     $field_type = $solr_field['type'];
     $field_schema = $solr_field['schema'];
     $field_dynamicbase = isset($solr_field['dynamicBase']) ? $solr_field['dynamicBase'] : NULL;
 
-    // set field handlers
+    // Set field handlers.
     $field = array();
     $field['title'] = $solr_field_name;
     $field['help'] = t('Type') . ': ' . $field_type;
-    // field handler
+    // Field handler.
     if ($field_type == 'date') {
       $field['field']['handler'] = 'islandora_solr_views_handler_field_date';
     }
     else {
       $field['field']['handler'] = 'islandora_solr_views_handler_field';
     }
-    // check if sortable
+    // Check if sortable.
     if (strstr($field_schema, "I") != FALSE AND strstr($field_schema, "M") == FALSE) {
       $field['field']['click sortable'] = TRUE;
     }
-    // argument handler
+    // Argument handler.
     $field['argument'] = array(
       'handler' => 'islandora_solr_views_handler_argument',
     );
-    // filter handler
+    // Filter handler.
     $field['filter'] = array(
       'handler' => 'islandora_solr_views_handler_filter',
     );
-    // sortable handler
-    // check if sortable: must be indexed and can't be multivalued
+    // Sortable handler.
+    // Check if sortable: must be indexed and can't be multivalued.
     // http://wiki.apache.org/solr/CommonQueryParameters#sort
     if (strstr($field_schema, "I") != FALSE AND strstr($field_schema, "M") == FALSE) {
       $field['sort'] = array(
         'handler' => 'islandora_solr_views_handler_sort',
       );
     }
-    // add array
+    // Add array.
     $data[$base_table][$solr_field_name] = $field;
-
   }
-
+  // Add our collection counting goodness.
+  $data[$base_table]['solr_collection_count'] = array(
+    'title' => 'Collection count',
+    'help' => t('This shows the number of immediate child objects in the collection.'),
+    'field' => array(
+      'handler' => 'IslandoraSolrViewsHandlerCollectionCount',
+    ),
+  );
   return $data;
 }
-
-
