@@ -17,3 +17,4 @@ files[] = handlers/islandora_solr_views_handler_argument.inc
 files[] = handlers/islandora_solr_views_handler_filter.inc
 files[] = handlers/islandora_solr_views_handler_filter_query_lucene.inc
 files[] = handlers/islandora_solr_views_handler_filter_query_dismax.inc
+files[] = handlers/islandora_solr_views_handler_collection_count.inc

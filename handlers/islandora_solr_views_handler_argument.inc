@@ -5,12 +5,17 @@
  * Views base handler for arguments
  */
 
-// include common.inc for lesser_escape())
-// @TODO: call this somewhere else?
+// Include common.inc for lesser_escape()).
+// @TODO: Call this somewhere else?
 module_load_include('inc', 'islandora_solr', 'includes/common');
 
+// @codingStandardsIgnoreStart
+// This Whole file is ignored due to classes and methods are not camelcase and it
+// being called all over the place. TODO bring up to coding standards
 class islandora_solr_views_handler_argument extends views_handler_argument {
-
+  /**
+   * Function query.
+   */
   function query() {
 
     if (!empty($this->argument)) {
@@ -31,5 +36,5 @@ class islandora_solr_views_handler_argument extends views_handler_argument {
       $this->query->add_filter($fieldname, $value);
     }
   }
-
 }
+// @codingStandardsIgnoreEnd
