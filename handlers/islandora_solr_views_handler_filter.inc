@@ -8,17 +8,13 @@
 // @codingStandardsIgnoreStart
 // This Whole file is ignored due to classes and methods are not camelcase and it
 // being called all over the place. TODO bring up to coding standards
-// 
-// Include common.inc for lesser_escape()).
-// @TODO: Call this somewhere else?
-module_load_include('inc', 'islandora_solr', 'includes/common');
-
 class islandora_solr_views_handler_filter extends views_handler_filter {
   function query() {
     if (!empty($this->value)) {
       $value = $this->value;
 
-      $value = lesser_escape($value);
+      module_load_include('inc', 'islandora_solr', 'includes/utilities');
+      $value = islandora_solr_lesser_escape($value);
 
       $fieldname = $this->field;
 
