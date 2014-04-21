@@ -61,7 +61,7 @@ class islandora_solr_views_query extends views_plugin_query {
 
   /**
    * Function execute.
-   * 
+   *
    * Executes the query and fills the associated view object with according
    * values.
    *
@@ -97,7 +97,7 @@ class islandora_solr_views_query extends views_plugin_query {
 
       // Add filters to parameters.
       if (isset($this->params['filters'])) {
-        $params['fq'] = $this->params['filters'];
+        $params['f'] = $this->params['filters'];
       }
 
       // Add sorting.
@@ -117,9 +117,6 @@ class islandora_solr_views_query extends views_plugin_query {
         // Dismax.
         if (isset($this->params['defType']) AND $this->params['defType'] == 'dismax') {
           $dismax = $this->params['defType'];
-          // If no qf fields are specified in the requestHandler a default
-          // list is supplied here for dismax searches.
-          $params['qf'] = 'dc.title^5 dc.subject^2 dc.description^2 dc.creator^2 dc.contributor^1 dc.type';
         }
       }
       else {
@@ -135,18 +132,16 @@ class islandora_solr_views_query extends views_plugin_query {
         $params['defType'] = $dismax;
       }
 
+      // Add query (defaults to *:*).
+      $islandora_solr_query->buildQuery($query, $params);
+
       // Add solr limit.
       $islandora_solr_query->solrLimit = $this->pager->options['items_per_page'];
       // Add solr start.
       $islandora_solr_query->solrStart = $this->offset;
-      // Add query (defaults to *:*).
-      $islandora_solr_query->solrQuery = islandora_solr_restore_slashes($query);
-      // Add solr parameters.
-      $islandora_solr_query->solrParams = $params;
-
+      
       // Excecute query.
       $islandora_solr_query->executeQuery(FALSE);
-
       // Solr results.
       $results = $islandora_solr_query->islandoraSolrResult;
       $object_results = $results['response']['objects'];
