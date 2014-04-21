@@ -132,13 +132,14 @@ class islandora_solr_views_query extends views_plugin_query {
         $params['defType'] = $dismax;
       }
 
+      // Add query (defaults to *:*).
+      $islandora_solr_query->buildQuery($query, $params);
+
       // Add solr limit.
       $islandora_solr_query->solrLimit = $this->pager->options['items_per_page'];
       // Add solr start.
       $islandora_solr_query->solrStart = $this->offset;
-      // Add query (defaults to *:*).
-      $islandora_solr_query->buildQuery($query, $params);
-
+      
       // Excecute query.
       $islandora_solr_query->executeQuery(FALSE);
       // Solr results.
