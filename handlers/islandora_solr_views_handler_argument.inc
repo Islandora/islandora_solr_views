@@ -12,7 +12,7 @@ class islandora_solr_views_handler_argument extends views_handler_argument {
   /**
    * Function query.
    */
-  function query() {
+  function query($group_by = FALSE) {
 
     if (!empty($this->argument)) {
       $value = $this->argument;
