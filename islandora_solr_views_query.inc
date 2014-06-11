@@ -139,7 +139,7 @@ class islandora_solr_views_query extends views_plugin_query {
       $islandora_solr_query->solrLimit = $this->pager->options['items_per_page'];
       // Add solr start.
       $islandora_solr_query->solrStart = $this->offset;
-      
+
       // Excecute query.
       $islandora_solr_query->executeQuery(FALSE);
       // Solr results.
@@ -183,8 +183,9 @@ class islandora_solr_views_query extends views_plugin_query {
    * Function add_filter.
    */
   public function add_filter($type, $value, $exclude = FALSE) {
+    module_load_include('inc', 'islandora_solr', 'includes/utilities');
     $exclude_string = ($exclude) ? '-' : '';
-    $this->params['filters'][] = $exclude_string . $type . ':' . $value;
+    $this->params['filters'][] = $exclude_string . islandora_solr_lesser_escape($type) . ':' . $value;
   }
 
   /**
