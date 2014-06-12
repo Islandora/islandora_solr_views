@@ -102,9 +102,10 @@ class islandora_solr_views_query extends views_plugin_query {
 
       // Add sorting.
       if (isset($this->params['sort'])) {
+        module_load_include('inc', 'islandora_solr', 'includes/utilities');
         // Populate sorting parameters.
         foreach ($this->params['sort'] as $field => $order) {
-          $params['sort'][] = $field . ' ' . $order;
+          $params['sort'][] = islandora_solr_lesser_escape($field) . ' ' . $order;
         }
       }
 
