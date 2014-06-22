@@ -97,7 +97,20 @@ class islandora_solr_views_query extends views_plugin_query {
 
       // Add filters to parameters.
       if (isset($this->params['filters'])) {
-        $params['f'] = $this->params['filters'];
+        // Need to see what filter group operations we may have present.
+        $group_ops = $this->where;
+        $constructed_group_params = array();
+        foreach ($this->params['filters'] as $group => $filter) {
+          // Filters that need to be grouped will come in as arrays.
+          if (is_array($filter)) {
+            $group_string = implode($filter, " {$group_ops[$group]['type']} ");
+            $constructed_group_params[$group] = format_string("(!group_string)", array('!group_string' => $group_string));
+          }
+          else {
+            $params['f'][] = $filter;
+          }
+        }
+        $params['f'][] = implode($constructed_group_params, " {$this->group_operator} ");
       }
 
       // Add sorting.
@@ -183,10 +196,16 @@ class islandora_solr_views_query extends views_plugin_query {
   /**
    * Function add_filter.
    */
-  public function add_filter($type, $value, $exclude = FALSE) {
+  public function add_filter($type, $value, $group, $exclude = FALSE) {
     module_load_include('inc', 'islandora_solr', 'includes/utilities');
     $exclude_string = ($exclude) ? '-' : '';
-    $this->params['filters'][] = $exclude_string . islandora_solr_lesser_escape($type) . ':' . $value;
+    if ($group) {
+      $this->params['filters'][$group][] = $exclude_string . islandora_solr_lesser_escape($type) . ':' . $value;
+    }
+    else {
+      $this->params['filters'][] = $exclude_string . islandora_solr_lesser_escape($type) . ':' . $value;
+
+    }
   }
 
   /**
