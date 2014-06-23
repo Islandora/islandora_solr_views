@@ -103,14 +103,14 @@ class islandora_solr_views_query extends views_plugin_query {
         foreach ($this->params['filters'] as $group => $filter) {
           // Filters that need to be grouped will come in as arrays.
           if (is_array($filter)) {
-            $group_string = implode($filter, " {$group_ops[$group]['type']} ");
+            $group_string = implode(" {$group_ops[$group]['type']} ", $filter);
             $constructed_group_params[$group] = format_string("(!group_string)", array('!group_string' => $group_string));
           }
           else {
             $params['f'][] = $filter;
           }
         }
-        $params['f'][] = implode($constructed_group_params, " {$this->group_operator} ");
+        $params['f'][] = implode(" {$this->group_operator} ", $constructed_group_params);
       }
 
       // Add sorting.
