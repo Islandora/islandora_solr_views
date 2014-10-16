@@ -3,7 +3,7 @@ description = Provides Islandora Solr integration with Views
 package = Islandora Search
 core = "7.x"
 php = 5.2
-version = "7.x-dev"
+version = 7.x-dev
 
 dependencies[] = islandora_solr
 dependencies[] = views
