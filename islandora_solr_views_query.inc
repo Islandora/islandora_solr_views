@@ -38,6 +38,19 @@ class islandora_solr_views_query extends views_plugin_query {
    */
   protected $fields;
 
+  /**
+   * An array of sections of the WHERE query. Each section is in itself
+   * an array of pieces and a flag as to whether or not it should be AND
+   * or OR.
+   */
+  protected $where = array();
+  
+  /**
+   * The default operator to use when connecting the WHERE groups. May be
+   * AND or OR.
+   */
+  protected $group_operator = 'AND';
+
   protected $islandora_solr_results;
 
   /**
