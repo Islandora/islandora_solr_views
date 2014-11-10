@@ -1,15 +1,9 @@
 TODO:
 =====
 
-High priority
--------------
-
-
-
 Normal Priority
 ---------------
 - add custom formatters. (formatters should maybe be added in the islandora_solr module, but called in islandora_solr_views as well)
-- add negative operator for filters
 - Query parser filters should also work as an argument
 - expose options how to handle multivalued fields
 - Pull in human readable names (and help texts?) for islandora solr views handlers
@@ -32,7 +26,7 @@ Low Priority
 
 Sorting:
 multiValued="false"
-indexed="true" 
+indexed="true"
 non-tokenized (no analyzer or single term analyser (KeywordTokenizer))
 
 M == false, I == true, T == false
@@ -52,7 +46,6 @@ Note: adding functionality should always extend the islandora solr base handlers
 
 
 @TODO: automatically replaced the dots in default values of exposed filter parameters. Maybe that should be added on form validate too.
-@TODO: (exposed) filters only work with AND statements, not with OR.
 @TODO: fix odd space issue when filtering value with a space (both _s and _it)
 
 @TODO: add field handler for date formatting. (with date module api?)
@@ -118,4 +111,4 @@ Sample solr query
 &f.ss_language.facet.mincount=1
 &f.bundle.facet.limit=50
 &f.bundle.facet.mincount=1
-&wt=json&json.nl=map 
+&wt=json&json.nl=map
