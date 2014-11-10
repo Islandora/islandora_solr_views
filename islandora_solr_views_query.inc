@@ -44,7 +44,7 @@ class islandora_solr_views_query extends views_plugin_query {
    * or OR.
    */
   protected $where = array();
-  
+
   /**
    * The default operator to use when connecting the WHERE groups. May be
    * AND or OR.
