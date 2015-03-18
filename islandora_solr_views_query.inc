@@ -127,10 +127,10 @@ class islandora_solr_views_query extends views_plugin_query {
       }
 
       // Add sorting.
-      if (isset($this->params['sort'])) {
+      if (isset($this->orderby)) {
         module_load_include('inc', 'islandora_solr', 'includes/utilities');
         // Populate sorting parameters.
-        foreach ($this->params['sort'] as $field => $order) {
+        foreach ($this->orderby as $field => $order) {
           $params['sort'][] = islandora_solr_lesser_escape($field) . ' ' . $order;
         }
       }
@@ -232,11 +232,7 @@ class islandora_solr_views_query extends views_plugin_query {
    * Function add_sort.
    */
   public function add_sort($field, $order) {
-    // When sort filters are exposed, two sort calls are made for reasons
-    // unknown, canceling each other out. This way the second call will override
-    // the first, avoiding the issue for now.
-    // @see http://drupal.org/node/1473522
-    $this->params['sort'][$field] = $order;
+    $this->orderby[$field] = $order;
   }
 
   /**
