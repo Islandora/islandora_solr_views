@@ -90,15 +90,15 @@ class islandora_solr_views_query extends views_plugin_query {
 
       // Execute the search.
       $params = array();
-
       $params['rows'] = $this->pager->options['items_per_page'];
-      $params['start'] = $this->pager->current_page * $this->pager->options['items_per_page'];
 
       // If we display all items without pager.
       if ($params['rows'] == 0) {
         $params['rows'] = 1000000;
+        if (!isset($this->offset)) {
+          $this->offset = 0;
+        }
       }
-
       // Add fields.
       if (isset($this->params['fl'])) {
         // Always return PID.
@@ -163,7 +163,7 @@ class islandora_solr_views_query extends views_plugin_query {
       $islandora_solr_query->buildQuery($query, $params);
 
       // Add solr limit.
-      $islandora_solr_query->solrLimit = $this->pager->options['items_per_page'];
+      $islandora_solr_query->solrLimit = $params['rows'];
       // Add solr start.
       $islandora_solr_query->solrStart = $this->offset;
 
@@ -181,10 +181,10 @@ class islandora_solr_views_query extends views_plugin_query {
       // Store response.
       $this->islandora_solr_response = $results;
 
-      // Store the results.
-      // No object, but Array.
-      $view->total_rows = $this->islandora_solr_response['response']['numFound'];
-      $this->pager->total_items = $this->islandora_solr_response['response']['numFound'];
+      // Store the results, need to subtract the start from the number found
+      // to account for offsets.
+      $view->total_rows = $this->islandora_solr_response['response']['numFound'] - $this->pager->options['offset'];
+      $this->pager->total_items = $this->islandora_solr_response['response']['numFound'] - $this->pager->options['offset'];
       $this->pager->update_page_info();
 
       // We shouldn't use $results['performance']['complete'] here, since
