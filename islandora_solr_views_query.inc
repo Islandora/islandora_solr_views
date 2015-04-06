@@ -181,10 +181,10 @@ class islandora_solr_views_query extends views_plugin_query {
       // Store response.
       $this->islandora_solr_response = $results;
 
-      // Store the results.
-      // No object, but Array.
-      $view->total_rows = $this->islandora_solr_response['response']['numFound'];
-      $this->pager->total_items = $this->islandora_solr_response['response']['numFound'];
+      // Store the results, need to subtract the start from the number found
+      // to account for offsets.
+      $view->total_rows = $this->islandora_solr_response['response']['numFound'] - $this->pager->options['offset'];
+      $this->pager->total_items = $this->islandora_solr_response['response']['numFound'] - $this->pager->options['offset'];
       $this->pager->update_page_info();
 
       // We shouldn't use $results['performance']['complete'] here, since
