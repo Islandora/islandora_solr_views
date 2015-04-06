@@ -95,7 +95,9 @@ class islandora_solr_views_query extends views_plugin_query {
       // If we display all items without pager.
       if ($params['rows'] == 0) {
         $params['rows'] = 1000000;
-        $this->offset = 0;
+        if (!isset($this->offset)) {
+          $this->offset = 0;
+        }
       }
       // Add fields.
       if (isset($this->params['fl'])) {
