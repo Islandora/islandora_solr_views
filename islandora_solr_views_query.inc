@@ -90,15 +90,13 @@ class islandora_solr_views_query extends views_plugin_query {
 
       // Execute the search.
       $params = array();
-
       $params['rows'] = $this->pager->options['items_per_page'];
-      $params['start'] = $this->pager->current_page * $this->pager->options['items_per_page'];
 
       // If we display all items without pager.
       if ($params['rows'] == 0) {
         $params['rows'] = 1000000;
+        $this->offset = 0;
       }
-
       // Add fields.
       if (isset($this->params['fl'])) {
         // Always return PID.
@@ -163,7 +161,7 @@ class islandora_solr_views_query extends views_plugin_query {
       $islandora_solr_query->buildQuery($query, $params);
 
       // Add solr limit.
-      $islandora_solr_query->solrLimit = $this->pager->options['items_per_page'];
+      $islandora_solr_query->solrLimit = $params['rows'];
       // Add solr start.
       $islandora_solr_query->solrStart = $this->offset;
 
