@@ -29,6 +29,10 @@ On the next screen, enter a name for your view, and from the 'Show' drop-down me
 
 From here, most of the configuration and setup for your view is exactly the same as for any other view, with a few significant differences. Islandora Solr Views adds Solr indices to the `FIELDS`, `FILTER CRITERIA` and `SORT CRITERIA` sections.
     
+## Documentation
+
+Further documentation for this module is available at [our wiki](https://wiki.duraspace.org/display/ISLANDORA/Islandora+Solr+Views).
+
 ## Troubleshooting/Issues
  
 Having problems or solved a problem? Check out the Islandora google groups for a solution.
@@ -44,7 +48,7 @@ Current maintainers:
 
 ## Development
 
-If you would like to contribute to this module, please check out our helpful [Documentation for Developers](https://github.com/Islandora/islandora/wiki#wiki-documentation-for-developers) info, as well as our [Developers](http://islandora.ca/developers) section on the Islandora.ca site.
+If you would like to contribute to this module, please check out [CONTRIBUTING.md](CONTRIBUTING.md). In addition, we have helpful [Documentation for Developers](https://github.com/Islandora/islandora/wiki#wiki-documentation-for-developers) info, as well as our [Developers](http://islandora.ca/developers) section on the [Islandora.ca](http://islandora.ca) site.
 
 ## License
 
