@@ -6,6 +6,22 @@
  */
 
 /**
+ * Implements hook_menu().
+ */
+function islandora_solr_views_menu() {
+  $items['islandora_solr_views/autocomplete_luke/%'] = array(
+    'title' => 'Islandora Solr Luke autocomplete',
+    'description' => 'Autocomplete callback to populate solr text fields.',
+    'page callback' => '_islandora_solr_views_autocomplete_luke',
+    'page arguments' => array(2),
+    'access arguments' => array('administer islandora solr'),
+    'file' => 'includes/callbacks.inc',
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+/**
  * Implements hook_views_api().
  */
 function islandora_solr_views_views_api() {

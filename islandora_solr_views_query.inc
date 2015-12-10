@@ -58,18 +58,28 @@ class islandora_solr_views_query extends views_plugin_query {
    */
   public function build(&$view) {
     $view->init_pager();
-
     // Let the pager modify the query to add limits.
     $this->pager->query();
-
+    
+    // Real Solr fields mapper
+    $solr_fields = array();
     // Set aliases of the fields.
+    // Since we our real Solr field will not match always the $field_name,
+    // we will have to build our own naming structure.
     foreach ($view->field as $field_name => &$field) {
-      $field->field_alias = $field_name;
+      $solr_field_name_to_use = isset($field->options['solr_field']) ? $field->options['solr_field'] : $field->real_field;
+      if (isset($solr_fields[$solr_field_name_to_use])) {
+        $cardinality = array_push($solr_fields[$solr_field_name_to_use], $field_name);
+      }
+      else {
+        $solr_fields[$solr_field_name_to_use] = array($field_name);
+        $cardinality = 1;
+      }
+      $field->field_alias = $cardinality == 1 ? $solr_field_name_to_use : $solr_field_name_to_use . "_" . ($cardinality-1); 
       $field->aliases['entity_type'] = 'entity_type';
     }
-
     // Add fields to the query so they will be shown in solr document.
-    $this->params['fl'] = array_keys($view->field);
+    $this->params['fl'] = array_keys($solr_fields);
   }
 
   /**
@@ -78,13 +88,25 @@ class islandora_solr_views_query extends views_plugin_query {
    * Executes the query and fills the associated view object with according
    * values.
    *
+   * @global IslandoraSolrQueryProcessor $_islandora_solr_queryclass
+   *   The IslandoraSolrQueryProcessor object which includes the current query
+   *   settings and the raw Solr results.
+   *
    * Values to set: $view->result, $view->total_rows, $view->execute_time,
    * $view->pager['current_page'].
    */
   public function execute(&$view) {
     try {
+      // New query processor class.
+      $islandora_solr_query = new IslandoraSolrQueryProcessor();
+      // Only enable facets if needed. Makes queries faster
+      if ($this->options['enable_facets']) {
+        global $_islandora_solr_queryclass;
+        // Set our famous global so we can enable the facet block
+        $_islandora_solr_queryclass = $islandora_solr_query;
+      }
+        
       $start = microtime(TRUE);
-
       // Include common.inc.
       module_load_include('inc', 'islandora_solr', 'includes/common');
 
@@ -96,7 +118,7 @@ class islandora_solr_views_query extends views_plugin_query {
       if ($params['rows'] == 0) {
         $params['rows'] = 1000000;
         if (!isset($this->offset)) {
-          $this->offset = 0;
+          $this->offset = 0; 
         }
       }
       // Add fields.
@@ -129,10 +151,10 @@ class islandora_solr_views_query extends views_plugin_query {
       // Add sorting.
       if (isset($this->orderby)) {
         module_load_include('inc', 'islandora_solr', 'includes/utilities');
-        // Populate sorting parameters.
-        foreach ($this->orderby as $field => $order) {
-          $params['sort'][] = islandora_solr_lesser_escape($field) . ' ' . $order;
-        }
+        // Populate sorting parameter as one string.
+         $params['sort'] = array_map(function($item) {
+          return $item['field'].' '.$item['direction'];
+        }, $this->orderby);
       }
 
       // Set query.
@@ -150,23 +172,22 @@ class islandora_solr_views_query extends views_plugin_query {
         $query = '*:*';
       }
 
-      // New query processor class.
-      $islandora_solr_query = new IslandoraSolrQueryProcessor();
 
       // Check for dismax (not functional yet).
       if ($dismax != NULL) {
         $islandora_solr_query->solrDefType = $dismax;
         $params['defType'] = $dismax;
       }
-
       // Add query (defaults to *:*).
       $islandora_solr_query->buildQuery($query, $params);
-
+      // Add 'fl' to solrParams since the query builder does not use them.
+      $islandora_solr_query->solrParams['fl'] = $params['fl'];
+      // Disable or enable facets depending on user option.
+      $islandora_solr_query->solrParams['facet'] = $this->options['enable_facets'] ? 'true' : 'false';
       // Add solr limit.
       $islandora_solr_query->solrLimit = $params['rows'];
       // Add solr start.
       $islandora_solr_query->solrStart = $this->offset;
-
       // Excecute query.
       $islandora_solr_query->executeQuery(FALSE);
       // Solr results.
@@ -205,18 +226,33 @@ class islandora_solr_views_query extends views_plugin_query {
       return;
     }
   }
+  function option_definition() {
+    $options = parent::option_definition();
+    $options['enable_facets'] = array('default' => FALSE);
+    return $options;
+  }
 
+  function options_form(&$form, &$form_state) {
+
+    $form['enable_facets'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Enable Facets'),
+      '#default_value' => $this->options['enable_facets'],
+      '#description' => t('This option enables facet processing and global Solr variable to display block'),
+      '#required' => FALSE,
+    );
+  }
   /**
-   * Function add_filter.
-   */
+  * Function add_filter.
+  */
   public function add_filter($type, $value, $group, $exclude = FALSE) {
     module_load_include('inc', 'islandora_solr', 'includes/utilities');
     $exclude_string = ($exclude) ? '-' : '';
     if ($group) {
-      $this->params['filters'][$group][] = $exclude_string . islandora_solr_lesser_escape($type) . ':' . $value;
+      $this->params['filters'][$group][] = $exclude_string . $type . ':' . $value;
     }
     else {
-      $this->params['filters'][] = $exclude_string . islandora_solr_lesser_escape($type) . ':' . $value;
+      $this->params['filters'][] = $exclude_string . $type . ':' . $value;
 
     }
   }
@@ -232,7 +268,11 @@ class islandora_solr_views_query extends views_plugin_query {
    * Function add_sort.
    */
   public function add_sort($field, $order) {
-    $this->orderby[$field] = $order;
+    //$this->orderby[$field] = $order;
+    $this->orderby[] = array(
+      'field' => $field,
+      'direction' => drupal_strtolower($order)
+    );
   }
 
   /**
