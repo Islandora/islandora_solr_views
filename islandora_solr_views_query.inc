@@ -153,7 +153,7 @@ class islandora_solr_views_query extends views_plugin_query {
         module_load_include('inc', 'islandora_solr', 'includes/utilities');
         // Populate sorting parameter as one string.
          $params['sort'] = array_map(function($item) {
-          return $item['field'].' '.$item['direction'];
+          return $item['field'] .' '. $item['direction'];
         }, $this->orderby);
       }
 
