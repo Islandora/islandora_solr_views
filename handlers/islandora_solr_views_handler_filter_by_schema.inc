@@ -8,7 +8,7 @@
 // @codingStandardsIgnoreStart
 // This Whole file is ignored due to classes and methods are not camelcase and it
 // being called all over the place. TODO bring up to coding standards
-class islandora_solr_views_handler_filter_by_schema extends views_handler_filter {
+class islandora_solr_views_handler_filter_by_schema extends islandora_solr_views_handler_filter {
 
   function query() {
     if (!empty($this->value) && !empty($this->options['solr_field'])) {
@@ -77,43 +77,6 @@ class islandora_solr_views_handler_filter_by_schema extends views_handler_filter
     // Modify the title for 'value'
     $form['value']['#title'] = t("Filter value for Solr field");
     $form['value']['#weigth'] = 10;
-
-  }
-  /**
-   * Provide a simple textfield for equality.
-   */
-  function value_form(&$form, &$form_state) {
-    $which = 'all';
-    $form['value'] = array(
-      '#type' => 'textfield',
-      '#title' => check_plain($this->definition['title']),
-      '#default_value' => $this->value,
-    );
-    if (!empty($form['operator'])) {
-      $source = ($form['operator']['#type'] == 'radios') ? 'radio:options[operator]' : 'edit-options-operator';
-    }
-    if (!empty($form_state['exposed'])) {
-      $identifier = $this->options['expose']['identifier'];
-
-      if (empty($this->options['expose']['use_operator']) || empty($this->options['expose']['operator_id'])) {
-        // Exposed and locked.
-        $which = in_array($this->operator, $this->operator_values(1)) ? 'value' : 'none';
-      }
-      else {
-        $source = 'edit-' . drupal_html_id($this->options['expose']['operator_id']);
-      }
-    }
-    if (!empty($form_state['exposed']) && !isset($form_state['input'][$identifier])) {
-      $form_state['input'][$identifier] = $this->value;
-    }
-  }
-
-  /**
-   * Provide default options for exposed filters.
-   */
-  function expose_options() {
-    parent::expose_options();
-    $this->options['expose']['identifier'] = drupal_strtolower(preg_replace('/[^A-Za-z0-9]/', '_', $this->options['id']));
   }
 
   /**
@@ -135,22 +98,6 @@ class islandora_solr_views_handler_filter_by_schema extends views_handler_filter
     if ($this->is_a_group()) {
       $this->build_group_validate($form, $form_state);
     }
-  }
-
-  function operators() {
-    $operators = array(
-      '=' => array(
-        'title' => t('Is equal to'),
-        'short' => t('='),
-        'values' => 1,
-      ),
-      '!=' => array(
-        'title' => t('Is not equal to'),
-        'short' => t('!='),
-        'values' => 1,
-      ),
-    );
-    return $operators;
   }
 
   /**
