@@ -44,6 +44,7 @@ Having problems or solved a problem? Check out the Islandora google groups for a
 
 Current maintainers:
 
+* [Dordan Dukart](https://github.com/jordandukart)
 * [Diego Pino](https://github.com/DiegoPino)
 
 ## Development
