@@ -83,10 +83,7 @@ class islandora_solr_views_handler_field_date extends islandora_solr_views_handl
   function render($values) {
     // Include rendering style of parent class.
     parent::render($values);
-    $value = $this->get_value($values);
-    // Set value to timestamp from 2011-12-14T10:51:44.921Z to 1323859904.
-    $value = strtotime($value);
-
+    $date_values = explode(', ', $this->get_value($values));
     $format = $this->options['date_format'];
     if (in_array($format, array(
       'custom',
@@ -101,54 +98,67 @@ class islandora_solr_views_handler_field_date extends islandora_solr_views_handl
       'time span'))) {
       $custom_format = $this->options['custom_date_format'];
     }
+    $dates = array();
+    foreach ($date_values as $value) {
+      $value = strtotime($value);
+      if ($value) {
+        // Will be positive for a datetime in the past (ago), and negative
+        // for a datetime in the future (hence).
+        $time_diff = REQUEST_TIME - $value;
+        switch ($format) {
+          case 'raw time ago':
+            $dates[] = format_interval($time_diff, is_numeric($custom_format) ? $custom_format : 2);
+            break;
 
-    if ($value) {
-      // Will be positive for a datetime in the past (ago), and negative
-      // for a datetime in the future (hence).
-      $time_diff = REQUEST_TIME - $value;
-      switch ($format) {
-        case 'raw time ago':
-          return format_interval($time_diff, is_numeric($custom_format) ? $custom_format : 2);
+          case 'time ago':
+            $dates[] = t('%time ago', array('%time' => format_interval($time_diff, is_numeric($custom_format) ? $custom_format : 2)));
+            break;
 
-        case 'time ago':
-          return t('%time ago', array('%time' => format_interval($time_diff, is_numeric($custom_format) ? $custom_format : 2)));
+          case 'raw time hence':
+            $dates[] = format_interval(-$time_diff, is_numeric($custom_format) ? $custom_format : 2);
+            break;
 
-        case 'raw time hence':
-          return format_interval(-$time_diff, is_numeric($custom_format) ? $custom_format : 2);
+          case 'time hence':
+            $dates[] = t('%time hence', array('%time' => format_interval(-$time_diff, is_numeric($custom_format) ? $custom_format : 2)));
+            break;
 
-        case 'time hence':
-          return t('%time hence', array('%time' => format_interval(-$time_diff, is_numeric($custom_format) ? $custom_format : 2)));
+          case 'raw time span':
+            $dates[] = ($time_diff < 0 ? '-' : '') . format_interval(abs($time_diff), is_numeric($custom_format) ? $custom_format : 2);
+            break;
 
-        case 'raw time span':
-          return ($time_diff < 0 ? '-' : '') . format_interval(abs($time_diff), is_numeric($custom_format) ? $custom_format : 2);
+          case 'inverse time span':
+            $dates[] = ($time_diff > 0 ? '-' : '') . format_interval(abs($time_diff), is_numeric($custom_format) ? $custom_format : 2);
+            break;
 
-        case 'inverse time span':
-          return ($time_diff > 0 ? '-' : '') . format_interval(abs($time_diff), is_numeric($custom_format) ? $custom_format : 2);
+          case 'time span':
+            $substitutions = array(
+              '%time' => format_interval(abs($time_diff), is_numeric($custom_format) ?
+                $custom_format :
+                2),
+            );
+            if ($time_diff < 0) {
+              $dates[] = t('%time hence', $substitutions);
+            }
+            else {
+              $dates[] = t('%time ago', $substitutions);
 
-        case 'time span':
-          $substitutions = array(
-            '%time' => format_interval(abs($time_diff), is_numeric($custom_format) ?
-              $custom_format :
-              2),
-          );
-          if ($time_diff < 0) {
-            return t('%time hence', $substitutions);
-          }
-          else {
-            return t('%time ago', $substitutions);
+            }
+            break;
 
-          }
-        case 'custom':
-          if ($custom_format == 'r') {
-            return format_date($value, $format, $custom_format, NULL, 'en');
-          }
-          return format_date($value, $format, $custom_format);
+          case 'custom':
+            if ($custom_format == 'r') {
+              $dates[] = format_date($value, $format, $custom_format, NULL, 'en');
+            }
+            $dates[] = format_date($value, $format, $custom_format);
+            break;
 
-        default:
-          return format_date($value, $format);
-
+          default:
+            $dates[] = format_date($value, $format);
+            break;
+        }
       }
     }
+    return implode(', ', $dates);
   }
 }
 // @codingStandardsIgnoreEnd
