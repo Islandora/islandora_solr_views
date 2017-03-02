@@ -33,4 +33,3 @@ script:
   - $ISLANDORA_DIR/tests/scripts/line_endings.sh sites/all/modules/islandora_solr_views
   - drush coder-review --reviews=production,security,style,i18n,potx,sniffer islandora_solr_views
   - phpcpd --names *.module,*.inc,*.test sites/all/modules/islandora_solr_views
-  - drush test-run --uri=http://localhost:8081 "Islandora Solr Views"
