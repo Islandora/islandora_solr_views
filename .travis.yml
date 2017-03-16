@@ -1,3 +1,4 @@
+sudo: required
 language: php
 php:
   - 5.3.3
@@ -24,9 +25,11 @@ before_install:
   - ln -s $TRAVIS_BUILD_DIR sites/all/modules/islandora_solr_views
   - ln -s $HOME/islandora_solr_search sites/all/modules/islandora_solr_search
   - drush en --yes islandora_solr_views
+before_script:
+  # Mysql might time out for long tests, increase the wait timeout.
+  - mysql -e 'SET @@GLOBAL.wait_timeout=1200'
 script:
   - ant -buildfile sites/all/modules/islandora_solr_views/build.xml lint
   - $ISLANDORA_DIR/tests/scripts/line_endings.sh sites/all/modules/islandora_solr_views
   - drush coder-review --reviews=production,security,style,i18n,potx,sniffer islandora_solr_views
   - phpcpd --names *.module,*.inc,*.test sites/all/modules/islandora_solr_views
-  - drush test-run --uri=http://localhost:8081 "Islandora Solr Views"
