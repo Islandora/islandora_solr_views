@@ -75,11 +75,10 @@ class islandora_solr_views_handler_field extends views_handler_field {
    * Data should be made XSS safe prior to calling this function.
    */
   function render_link($data, $values) {
-
     if (!empty($this->options['link_to_object']) && !empty($this->additional_fields['PID'])) {
       if ($data !== NULL && $data !== '') {
         $this->options['alter']['make_link'] = TRUE;
-        $this->options['alter']['path'] = 'islandora/object/' . $this->get_value($values, 'PID');
+        $this->options['alter']['path'] = 'islandora/object/' . urlencode($this->get_value($values, 'PID'));
       }
       else {
         $this->options['alter']['make_link'] = FALSE;
