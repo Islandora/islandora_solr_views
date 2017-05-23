@@ -29,6 +29,7 @@ function islandora_solr_views_views_plugins() {
  */
 function islandora_solr_views_views_data() {
   // Set base variables.
+  module_load_include('inc', 'islandora_solr', 'includes/luke');
   $base_field = 'PID';
   $base_table = 'islandora_solr';
   $data[$base_table]['table']['group'] = t('Islandora Solr');
@@ -39,11 +40,6 @@ function islandora_solr_views_views_data() {
     'help' => t('Searches the Islandora Solr index.'),
     'field' => $base_field,
   );
-
-  // Get the list of the fields in index directly from Solr.
-  $luke = islandora_solr_get_luke();
-  $solr_fields = $luke['fields'];
-
   // Always add score handlers.
   $data[$base_table]['score'] = array(
     'title' => t('Score'),
@@ -90,52 +86,75 @@ function islandora_solr_views_views_data() {
     ),
   );
 
-  // Loop over all solr fields.
-  foreach ($solr_fields as $solr_field_name => $solr_field) {
+  // Get the list of the fields in index directly from Solr.
+  $luke = islandora_solr_get_luke();
+  $solr_fields = $luke['fields'];
 
-    // We do not allow to display 'sort_*' fields.
-    if (strpos($solr_field_name, 'sort_') === 0) {
-      continue;
-    }
+  // Create template array for different supported field
+  // types.
+  $solr_fields_types_to_create = array(
+    'date' => array(
+      'create' => FALSE,
+      'title' => t('Date Solr field'),
+      'help' => t('Any Solr field of type Date'),
+    ),
+    'sortable' => array(
+      'create' => FALSE,
+      'title' => t('Sortable Solr field'),
+      'help' => t('Any Solr field that can be used to sort'),
+    ),
+    'general' => array(
+      'create' => count($solr_fields) > 0 ? TRUE : FALSE,
+      'title' => t('General Solr field'),
+      'help' => t('Any Solr field that can be used to query, filter or as context argument'),
+    ),
+  );
+  // Loop over all solr fields. We will group by types
+  // instead of creating individual fields.
+  foreach ($solr_fields as $solr_field_name => $solr_field) {
     // Set luke field variables.
     $field_type = $solr_field['type'];
     $field_schema = $solr_field['schema'];
-    $field_dynamicbase = isset($solr_field['dynamicBase']) ? $solr_field['dynamicBase'] : NULL;
-
-    // Set field handlers.
-    $field = array();
-    $field['title'] = $solr_field_name;
-    $field['help'] = t('Type') . ': ' . $field_type;
-    // Field handler.
     if ($field_type == 'date') {
-      $field['field']['handler'] = 'islandora_solr_views_handler_field_date';
+      $solr_fields_types_to_create['date']['create'] = TRUE;
     }
-    else {
-      $field['field']['handler'] = 'islandora_solr_views_handler_field';
-    }
-    // Check if sortable.
     if (strstr($field_schema, "I") != FALSE AND strstr($field_schema, "M") == FALSE) {
-      $field['field']['click sortable'] = TRUE;
+      $solr_fields_types_to_create['sortable']['create'] = TRUE;
     }
-    // Argument handler.
-    $field['argument'] = array(
-      'handler' => 'islandora_solr_views_handler_argument',
-    );
-    // Filter handler.
-    $field['filter'] = array(
-      'handler' => 'islandora_solr_views_handler_filter',
-    );
-    // Sortable handler.
-    // Check if sortable: must be indexed and can't be multivalued.
-    // http://wiki.apache.org/solr/CommonQueryParameters#sort
-    if (strstr($field_schema, "I") != FALSE AND strstr($field_schema, "M") == FALSE) {
-      $field['sort'] = array(
-        'handler' => 'islandora_solr_views_handler_sort',
-      );
-    }
-    // Add array.
-    $data[$base_table][$solr_field_name] = $field;
   }
+  // Create actual fields grouped by schema type.
+  foreach ($solr_fields_types_to_create as $type => $field_data) {
+    if ($field_data['create']) {
+      $field = array();
+      $field['title'] = $field_data['title'];
+      $field['help'] = $field_data['help'];
+      if ($type == 'date') {
+        $field['field'] = array(
+          'handler' => 'islandora_solr_views_handler_field_date',
+        );
+      }
+      else {
+        $field['field'] = array(
+          'handler' => 'islandora_solr_views_handler_field_by_schema',
+        );
+      }
+      $field['filter'] = array(
+        'handler' => 'islandora_solr_views_handler_filter_by_schema',
+      );
+      if ($type == 'sortable') {
+        $field['sort'] = array(
+          'handler' => 'islandora_solr_views_handler_sort_by_schema',
+        );
+      }
+      if ($type == 'general') {
+        $field['argument'] = array(
+          'handler' => 'islandora_solr_views_handler_argument_by_schema',
+        );
+      }
+      $data[$base_table][$type] = $field;
+    }
+  }
+
   // Add our collection counting goodness.
   $data[$base_table]['solr_collection_count'] = array(
     'title' => 'Collection count',

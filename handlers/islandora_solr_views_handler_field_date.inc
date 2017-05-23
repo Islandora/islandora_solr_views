@@ -12,6 +12,29 @@
 // being called all over the place. TODO bring up to coding standards
 class islandora_solr_views_handler_field_date extends islandora_solr_views_handler_field {
 
+
+  /**
+   * Get value.
+   *
+   * @param type $values
+   * @param type $field
+   *
+   * @return type string
+   */
+  function get_value($values, $field = NULL) {
+    
+    $alias = isset($field) ? $this->aliases[$field] : $this->field_alias;
+   
+    if (isset($values->{$alias})) {
+      if (is_array($values->{$alias})) {
+        $values->{$alias} = array_filter($values->{$alias}, 'trim');
+        return implode(", ", $values->{$alias});
+      }
+      else {
+        return $values->{$alias};
+      }
+    }
+  }
   /**
    * Define new option.
    */
@@ -20,6 +43,7 @@ class islandora_solr_views_handler_field_date extends islandora_solr_views_handl
     $options = parent::option_definition();
 
     // Set defaults.
+    $options['solr_field'] =  array('default' => 'fgs_createdDate_dt');
     $options['date_format'] = array('default' => 'small');
     $options['custom_date_format'] = array('default' => '');
 
@@ -39,7 +63,15 @@ class islandora_solr_views_handler_field_date extends islandora_solr_views_handl
         '@date' => format_date(REQUEST_TIME, $value['type']),
       ));
     }
-
+    $form['solr_field'] = array(
+      '#title' => t('Solr field to use'),
+      '#description' => t("Select the Solr date field to use"),
+      '#size' => 45,
+      '#type' => 'textfield',
+      '#autocomplete_path' => 'islandora_solr_views/autocomplete_luke/date',
+      '#default_value' => !empty($this->options['solr_field']) ? $this->options['solr_field'] : 'fgs_createdDate_dt',
+      '#required' => TRUE,
+    );
     $form['date_format'] = array(
       '#type' => 'select',
       '#title' => t('Date format'),
@@ -76,7 +108,9 @@ class islandora_solr_views_handler_field_date extends islandora_solr_views_handl
 
     parent::options_form($form, $form_state);
   }
-
+  function ui_name($short = FALSE) {
+    return $this->get_field(parent::ui_name($short)) . ' ' . $this->options['solr_field'];
+  }
   /**
    * Render field.
    */
