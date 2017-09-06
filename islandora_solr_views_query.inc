@@ -131,8 +131,9 @@ class islandora_solr_views_query extends views_plugin_query {
         module_load_include('inc', 'islandora_solr', 'includes/utilities');
         // Populate sorting parameters.
         foreach ($this->orderby as $field => $order) {
-          $params['sort'][] = islandora_solr_lesser_escape($field) . ' ' . $order;
+          $sortFields[] = islandora_solr_lesser_escape($field) . ' ' . $order;
         }
+        $params['sort'][] = implode(",",$sortFields);
       }
 
       // Set query.
