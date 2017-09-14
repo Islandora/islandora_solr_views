@@ -133,7 +133,7 @@ class islandora_solr_views_query extends views_plugin_query {
         foreach ($this->orderby as $field => $order) {
           $sortFields[] = islandora_solr_lesser_escape($field) . ' ' . $order;
         }
-        $params['sort'][] = implode(",",$sortFields);
+        $params['sort'][] = implode(",", $sortFields);
       }
 
       // Set query.
