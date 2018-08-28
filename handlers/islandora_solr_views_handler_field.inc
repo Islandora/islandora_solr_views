@@ -78,7 +78,15 @@ class islandora_solr_views_handler_field extends views_handler_field {
     if (!empty($this->options['link_to_object']) && !empty($this->additional_fields['PID'])) {
       if ($data !== NULL && $data !== '') {
         $this->options['alter']['make_link'] = TRUE;
-        $this->options['alter']['path'] = 'islandora/object/' . urlencode($this->get_value($values, 'PID'));
+        $pid = $this->get_value($values, 'PID');
+        $shortpid = explode(':', $pid);
+        $shortpid = $shortpid[1];
+        if (is_numeric($shortpid) and ((65536 <= $shortpid) and ($shortpid <= 99999))) {
+          $this->options['alter']['path'] = 'islandora/object/' . $pid . '#_';
+        }
+        else {
+          $this->options['alter']['path'] = 'islandora/object/' . $pid;
+        }
       }
       else {
         $this->options['alter']['make_link'] = FALSE;
