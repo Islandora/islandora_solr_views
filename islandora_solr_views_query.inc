@@ -185,8 +185,15 @@ class islandora_solr_views_query extends views_plugin_query {
 
       // Store the results, need to subtract the start from the number found
       // to account for offsets.
-      $view->total_rows = $this->islandora_solr_response['response']['numFound'] - $this->pager->options['offset'];
-      $this->pager->total_items = $this->islandora_solr_response['response']['numFound'] - $this->pager->options['offset'];
+
+      // XXX: When configuring a pager in views there is no validation on a
+      // numeric entry. Therefore, empty string or any string equates to a 0
+      // in evaluation. This pops a warning in PHP 7 but does not in 5.
+      // @see: https://php.net/manual/en/migration71.other-changes.php.
+      $pager_offset = is_numeric($this->pager->options['offset']) ? $this->pager->options['offset'] : 0;
+
+      $view->total_rows = $this->islandora_solr_response['response']['numFound'] - $pager_offset;
+      $this->pager->total_items = $this->islandora_solr_response['response']['numFound'] - $pager_offset;
       $this->pager->update_page_info();
 
       // We shouldn't use $results['performance']['complete'] here, since
