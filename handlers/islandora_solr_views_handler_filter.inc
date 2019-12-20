@@ -22,7 +22,7 @@ class islandora_solr_views_handler_filter extends views_handler_filter {
         $values = array_filter($value);
         // Ensure that some values have been selected.
         if (!empty($values)) {
-          $this->query->add_filter($fieldname, '(' . implode('OR', $values) . ')', $this->options['group'], $exclude);
+          $this->query->add_filter($fieldname, '(' . implode(' OR ', $values) . ')', $this->options['group'], $exclude);
         }
         return;
       }
